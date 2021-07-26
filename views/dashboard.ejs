@@ -1,0 +1,53 @@
+<%- include ('partials/header.ejs') %> <%- include ('partials/headerNav.ejs') %>
+<div class="main-content">
+    <div class="container-fluid h-100">
+        <div class="card-deck h-100">
+            <div class="card bg-dark my-3 shadow-lg">
+                <div class="card-body d-flex flex-column text-center text-white">
+                    <h4 class="card-title">
+                        <a href="#" class="text-white">Dashboard</a>
+                        <hr />
+                    </h4>
+                    <div class="card-text">
+                        <!--<input
+                            id="matchdetail"
+                            type="text"
+                            class="text-center col-sm-12"
+                            readonly
+                            value="Upcoming Match <%= data[0].matchnum %> - <%= data[0].teamA %> vs <%= data[0].teamB %> on <%= data[0].date %> at <%= data[0].time %>"
+                        />-->
+                        <select id="matchdetail" class="custom-select input-group-sm" onchange>
+                            <% for (var i = 0; i < data.length; i++) { %>
+                            <option value="<%=data[i].matchid%>">
+                                Match <%= data[i].matchnum %> - 
+                                <%= data[i].teamA %> vs <%= data[i].teamB %> on 
+                                <%= data[i].date %> at <%= data[i].time %>
+                            </option>
+                            <% } %>
+                        </select>
+
+                        <table class="table text-white">
+                            <tr>
+                                <td><div id="dashboardteam" class="bg-dark"></div></td>
+                            </tr>
+                            <tr>
+                                <td><div id="dashboardmom" class="bg-dark"></div></td>
+                            </tr>
+                            <tr>
+                                <td><div id="dashboardscore" class="bg-dark"></div></td>
+                            </tr>
+                            <tr>
+                                <td><div id="dashboardwicket" class="bg-dark"></div></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include ('partials/footer.ejs') %> 
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="/assets/js/dashboardAjax.js"></script>
+<%- include ('partials/end.ejs') %>

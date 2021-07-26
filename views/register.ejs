@@ -1,0 +1,95 @@
+<%- include ('partials/header.ejs') %> <%- include ('partials/headerNavShort.ejs') %>
+<div class="main-content d-flex align-items-center justify-content-center">
+    <div class="card col-md-4">
+        <div class="card-body text-center">
+            <form
+                action="/register"
+                method="post"
+                oninput='passwordConfirm.setCustomValidity(passwordConfirm.value != password.value ? "Passwords do not match." : "")'
+            >
+                <div class="mt-3">
+                    <% if (message) { %>
+                    <span class="alert alert-secondary"><%= message %></span>
+                    <% } %>
+                </div>
+                <div class="mt-3">
+                    <h4 class="font-weight-bold text-secondary">Registration</h4>
+                </div>
+                <div class="form-group mt-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-user"></i>
+                            </span>
+                        </div>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="name"
+                            name="name"
+                            placeholder="Name"
+                            required="required"
+                        />
+                    </div>
+                </div>
+                <div class="form-group mt-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-at"></i>
+                            </span>
+                        </div>
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            name="email"
+                            placeholder="Email"
+                            required="required"
+                        />
+                    </div>
+                </div>
+                <div class="form-group mt-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-lock"></i>
+                            </span>
+                        </div>
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            placeholder="Password"
+                            required="required"
+                        />
+                    </div>
+                </div>
+                <div class="form-group mt-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fa fa-lock"></i>
+                            </span>
+                        </div>
+                        <input
+                            type="password"
+                            class="form-control"
+                            name="passwordConfirm"
+                            id="passwordConfirm"
+                            placeholder="Confirm Password"
+                            required="required"
+                        />
+                    </div>
+                </div>
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-success btn-block login-btn">
+                        Register
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<%- include ('partials/footer.ejs') %> <%- include ('partials/end.ejs') %>

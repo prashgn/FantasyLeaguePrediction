@@ -1,0 +1,98 @@
+<%- include ('partials/header.ejs') %> <%- include ('partials/headerNav.ejs') %>
+<div class="main-content">
+    <div class="container-fluid h-100">
+        <div class="card-deck h-100">
+            <div class="card bg-dark my-3 shadow-lg">
+                <div class="card-body d-flex flex-column text-center text-white">
+                    <h4 class="card-title">
+                        <a href="#" class="text-white"><%= data[0][0].username %> - Predictions</a>
+                        <hr />
+                    </h4>
+
+                    <div class="card-text">
+                        <div class="accordion" id="userdetail">
+                            <table class="table">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Match</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% var match_detail = data[1]; %> <% var user_detail = data[2];
+                                    %> <% for (var i = 0; i < match_detail.length; i++) { %>
+                                    <tr
+                                        class="text-light"
+                                        data-toggle="collapse"
+                                        data-target="#collapse<%= i %>"
+                                        <% if (i == 0) { %>
+                                        aria-expanded="true"
+                                        <% } else { %>
+                                        aria-expanded="false"
+                                        <% } %>
+                                        aria-controls="collapse<%= i %>"
+                                    >
+                                        <td>Match-<%= match_detail[i].matchnum %></td>
+                                        <td>
+                                            <%= match_detail[i].teamA %> vs <%=
+                                            match_detail[i].teamB %>
+                                            <span style="font-size: 10px;">
+                                                at <%= match_detail[i].venue %> on <%=
+                                                match_detail[i].date%> &nbsp; <%=
+                                                match_detail[i].time %> ( <%=
+                                                match_detail[i].seriesname %> <%=
+                                                match_detail[i].seriesmonth %> / <%=
+                                                match_detail[i].seriesyear %> )
+                                            </span>
+                                        </td>
+                                        <td><%= match_detail[i].totalscore %></td>
+                                    </tr>
+                                    <tr
+                                        id="collapse<%= i %>"
+                                        <% if (i == 0) { %>
+                                        class="collapse show"
+                                        <% } else { %>
+                                        class="collapse"
+                                        <% } %>
+                                        aria-labelledby="heading<%= i %>"
+                                        data-parent="#userdetail"
+                                    >
+                                        <td colspan="3">
+                                            <table
+                                                class="table border bg-dark text-light"
+                                                style="font-size: 10px;"
+                                            >
+                                                <thead class="thead-light font-weight-bold">
+                                                    <tr>
+                                                        <th>Rule</th>
+                                                        <th>Prediction</th>
+                                                        <th>Result</th>
+                                                        <th>Score</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% for (var j = 0; j < user_detail.length; j++) { %>
+                                                    <% if (user_detail[j].matchid == match_detail[i].matchid) { %>
+                                                    <tr>
+                                                        <td><%= user_detail[j].rulename %></td>
+                                                        <td><%= user_detail[j].predictvalue %></td>
+                                                        <td><%= user_detail[j].resultvalue %></td>
+                                                        <td><%= user_detail[j].score %></td>
+                                                    </tr>
+                                                    <% } } %>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ('partials/footer.ejs') %> <%- include ('partials/end.ejs') %>

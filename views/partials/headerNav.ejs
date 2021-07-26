@@ -1,0 +1,83 @@
+<% if (statusmsg != "") { var msg = statusmsg.split("|"); %>
+<div
+    class="border-0 small alert alert-success m-0 p-1 text-center bg-dark"
+    role="alert"
+    style="font-size: 11px;"
+>
+    <span class="border border-warning rounded-pill bg-warning">
+        &nbsp;&nbsp;
+        <strong>
+            <%= msg[0] %> :
+        </strong>
+        <%= msg[1] %> &nbsp;&nbsp;
+    </span>
+</div>
+<% } %>
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="" href="/">
+            <img
+                src="/assets/img/logo.png"
+                width="70"
+                height="70"
+                class="d-inline-block align-top img-fluid"
+                alt=""
+                href="/"
+            />
+        </a>
+        <a class="navbar-brand" href="/">&nbsp;Prediction League</a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarResponsive"
+            aria-controls="navbarResponsive"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/leagues">Leagues</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/fixtures">Fixtures</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/rules">Rules</a>
+                </li>
+                <% if (isAdmin == "admin") { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">Admin</a>
+                </li>
+                <% } %>
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle border border-secondary"
+                        href="#"
+                        id="navbarDropdownMenuLink"
+                        role="button"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        <%= username %>
+                    </a>
+                    <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="nav-link" href="/profile">Profile</a>
+                        <a class="nav-link" href="/logout">Sign Out</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

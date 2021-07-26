@@ -1,0 +1,88 @@
+<%- include ('partials/header.ejs') %> <%- include ('partials/headerNav.ejs') %>
+<div class="main-content">
+    <div class="container-fluid h-100">
+        <div class="card-deck h-100">
+            <div class="card bg-dark my-3 shadow-lg">
+                <div class="card-body d-flex flex-column text-center text-white">
+                    <h4 class="card-title">
+                        <a href="#" class="text-white">Rules</a>
+                        <hr />
+                    </h4>
+                    <div class="accordion" id="rulez">
+                        <div class="card border-bottom bg-light">
+                            <div class="card-header">
+                                <div class="text-left text-dark"> 
+                                    <div class="d-flex justify-content-around bd-highlight ">
+                                        <div class="col-sm-1 text-center">#</div>
+                                        <div class="col-sm-6 text-center">Rule Name</div>
+                                        <div class="col-sm-4 text-center">Stage</div>
+                                        <div class="col-sm-1 text-center">Points</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% var rule_data = data[0]; %> <% for (var i = 0; i < rule_data.length; i++)
+                        { %> 
+                        <div class="card border-bottom bg-dark">
+                            <div class="card-header" id="heading<%= i %>">
+                            	<div
+                                    class="text-left text-light"
+                                    data-toggle="collapse"
+                                    data-target="#collapse<%= i %>"
+                                    <% if (i == 0) { %>
+                                    aria-expanded="true"
+                                    <% } else { %>
+                                    aria-expanded="false"
+                                    <% } %>
+                                    aria-controls="collapse<%= i %>"
+                                > 
+                                    <div class="d-flex justify-content-around bd-highlight ">
+                                        <div class="col-sm-1 text-center"><%= i + 1 %></div>
+                                        <div class="col-sm-6 text-center"><%= rule_data[i].name %></div>
+                                        <div class="col-sm-4 text-center"><%= rule_data[i].stage %></div>
+                                        <div class="col-sm-1 text-center"><%= rule_data[i].points %> </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                id="collapse<%= i %>"
+                                <% if (i == 0) { %>
+                                class="collapse show"
+                                <% } else { %>
+                                class="collapse"
+                                <% } %>
+                                aria-labelledby="heading<%= i %>"
+                                data-parent="#rulez"
+                            >
+                                <div class="card-body text-light justify-content-center">
+                                    <%= rule_data[i].description %> <% var rulerange_data = data[1]; %>
+                                    <table class="table border text-light">
+                                        <% if (rule_data[i].stage == "stage3") { %>
+                                        <th>Range</th>
+                                        <th>Points</th>
+                                        <% } for (var j = 0; j < rulerange_data.length; j++) { %>
+                                        <% if (rule_data[i].RuleID == rulerange_data[j].RuleFKID) { %>
+                                        <tr>
+                                            <td>
+                                                +-<%= rulerange_data[j].pointRange %>
+                                            </td>
+                                            <td>
+                                                <%= rulerange_data[j].RangePoints %>
+                                            </td>
+                                        </tr>
+                                        <% } } %>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                    <br>
+                    For no prediction, the Contestant will get -1 for each of the rules mentioned above.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ('partials/footer.ejs') %> <%- include ('partials/end.ejs') %>

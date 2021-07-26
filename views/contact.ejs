@@ -1,0 +1,27 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <style> 
+            body{background: skyblue; font-family: verdana; color: #fff }
+        </style>
+        <title>My First Webpage</title> 
+        <meta charset="UTF-8"> 
+        <meta name="description" content="This is my NOdejs html page."> 
+    </head> 
+    <body> 
+        <%- include ('partials/nav.ejs') %>
+        <h1>Ganapati Bappa Moraya</h1> 
+        <p>Contact us</p> 
+     
+        
+        <form id="contact-form" method="post" action="/contact" >
+            <label for="who">Whom do you want to contact?</label>
+            <input type="text" name="who" value=<%= qs.name %>>
+            <label for="dept">Department Name?</label>
+            <input type="text" name="dept" value=<%= qs.dept %>>
+            <input type="submit" value="submit" />
+        </form>
+            
+    </body> 
+</html>
+

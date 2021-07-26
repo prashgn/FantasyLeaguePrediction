@@ -1,0 +1,60 @@
+<%- include ('partials/header.ejs') %> <%- include ('partials/headerNav.ejs') %>
+<div class="main-content">
+    <div class="container-fluid h-100">
+        <div class="card-deck h-100">
+            <div class="card bg-dark my-3 shadow-lg">
+                <div class="card-body d-flex flex-column text-center text-white">
+                    <h4 class="card-title">
+                        <a href="#" class="text-white"
+                            >League Detail for <%= data[0].leaguename %>
+                        </a>
+                        <hr />
+                    </h4>
+
+                    <div class="card-text">
+                        <table id="leaguedetail" class="table text-white">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Player</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var league_detail = data; %> <% for (var j = 0; j <
+                                league_detail.length; j++) { %>
+                                <tr
+                                <% if (league_detail[j].userid == userid) { %>
+                                class="bg-secondary"
+                                <% } %>
+                                >
+                                    <td>
+                                        <% if (league_detail[j].rank == null) { %> - <% } else { %>
+                                        <%= league_detail[j].rank %> <% } %>
+                                    </td>
+                                    <td><%= league_detail[j].username %></td>
+                                    <td>
+                                        <% if (league_detail[j].score == null) { %> - <% } else { %>
+                                        <%= league_detail[j].score %> <% } %>
+                                        <input
+                                            type="hidden"
+                                            value="<%= league_detail[j].userid %>"
+                                        />
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ('partials/footer.ejs') %>
+<script>
+    $('#leaguedetail tbody tr').on('click', function () {
+        window.location.href = '/userdetail/' + $(this).children('td').children('input').val();
+    });
+</script>
+<%- include ('partials/end.ejs') %>

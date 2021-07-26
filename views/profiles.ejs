@@ -1,0 +1,60 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link href='/assets/styles1.css' rel="stylesheet" type="text/css" />
+        <title>DB Record</title> 
+        <script  src="https://code.jquery.com/jquery-3.4.1.min.js"   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="   crossorigin="anonymous"></script>
+        <script src="/assets/getrequest.js"></script>
+    </head> 
+    <body> 
+        
+        <nav> 
+             <h4>My Profiles </h4>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="Login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+        
+        <div id="postResultDiv">
+	</div>
+	<br>
+	<div>
+        
+		<button id="allCustomers" type="button" class="btn btn-dark">Customers</button>
+		<div id="getResultDiv">
+	        
+            <% for (var i = 0; i < data.length; i++) { %>
+            <ul class="list-group"> <%= data[i].id %>  	</ul>
+            <ul class="list-group"> <%= data[i].username %>  	</ul>
+            <ul class="list-group"> <%= data[i].email %>  	</ul>
+            <% } %>
+    	</div>
+	</div>
+        <table class="table table-hover table-dark">
+            <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+ 
+    </tr>
+  </thead>
+            <tbody>
+          <% for (var i = 0; i < data.length; i++) { %>
+              <tr >
+                <td class="table-info"><%= data[i].id %></td>
+                <td ><%= data[i].username %></td>
+                <td class="table-info"><%= data[i].email %></td>
+         
+              </tr>    
+            <% } %>
+            </tbody>
+          </table>
+        
+        
+    </body> 
+</html>

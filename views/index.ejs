@@ -1,0 +1,152 @@
+<%- include ('partials/header.ejs') %> <%- include ('partials/headerNav.ejs') %>
+<div class="main-content">
+    <div class="container-fluid h-100">
+        <div class="card-deck h-100 py-3">
+            <div class="card bg-dark shadow-lg">
+                <div class="card-body d-flex flex-column text-center text-white">
+                    <h4 class="card-title">
+                        <a href="#" class="text-white">Leagues</a>
+                        <hr />
+                    </h4>
+                    <div class="card-text">
+                        <table id="leagues" class="table text-white">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>League Name</th>
+                                    <th>Rank</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% let league_data = data[2]; %> <% if (league_data.length < 1) { %>
+                                <tr>
+                                    <td colspan="2">No league found</td>
+                                </tr>
+                                <% } else { %> <% for (var i = 0; i < league_data.length; i++) { %>
+                                <tr>
+                                    <td>
+                                        <%= league_data[i].leaguename %>
+                                        <input
+                                            type="hidden"
+                                            value="<%= league_data[i].leagueid %>"
+                                        />
+                                    </td>
+                                    <td>
+                                        <% if (league_data[i].rank == null) { %> - <% } else { %>
+                                        <%= league_data[i].rank %> <% } %>
+                                    </td>
+                                </tr>
+                                <% } } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="/leagues" class="btn btn-success w-100 mt-auto">Explore more</a>
+                </div>
+            </div>
+            <div class="card bg-dark shadow-lg">
+                <div class="card-body d-flex flex-column text-center text-white">
+                    <h4 class="card-title">
+                        <a href="#" class="text-white">Fixtures</a>
+                        <hr />
+                    </h4>
+
+                    <div class="card-text">
+                        <table class="table text-white">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Time</th>
+                                    <th>Detail</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% let match_data = data[0]; %> <% if (match_data.length < 1) { %>
+                                <tr>
+                                    <td colspan="4">No upcoming matches found</td>
+                                </tr>
+                                <% } else { %> <% for (var i = 0; i < match_data.length; i++) { %>
+                                <tr>
+                                    <td><%= match_data[i].matchnum %></td>
+                                    <td>
+                                        <%= match_data[i].date %>
+                                        <br />
+                                        <span style="font-size: 10px;">
+                                            <%= match_data[i].time %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <%= match_data[i].teamA %> vs <%= match_data[i].teamB %>
+                                    </td>
+                                    <td>
+                                        <% if (match_data[i].completed == 1) { %>
+                                        <a
+                                            href="#"
+                                            class="btn btn-info btn-sm"
+                                            name="btnResult"
+                                            data-toggle="modal"
+                                            data-target="#modalResult"
+                                            >Result</a
+                                        >
+                                        <% } else { %>
+                                        <a
+                                            href="#"
+                                            class="btn btn-success btn-sm"
+                                            name="btnPredict"
+                                            data-toggle="modal"
+                                            data-target="#modalPredict"
+                                            >Predict</a
+                                        >
+                                        <% } %>
+                                        <input
+                                            type="hidden"
+                                            name="match"
+                                            value="<%= match_data[i].matchid %>"
+                                        />
+                                    </td>
+                                </tr>
+                                <% } } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="/fixtures" class="btn btn-success w-100 mt-auto">Explore more</a>
+                </div>
+            </div>
+            <div class="card bg-dark shadow-lg">
+                <div class="card-body d-flex flex-column text-center text-white">
+                    <h4 class="card-title">
+                        <a href="#" class="text-white">Rules</a>
+                        <hr />
+                    </h4>
+                    <div class="card-text">
+                        <table class="table text-white">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Prediction</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% let rule_data = data[1]; %> <% if (rule_data.length < 1) { %>
+                                <tr>
+                                    <td colspan="3">No rules found</td>
+                                </tr>
+                                <% } else { %> <% for (var i = 0; i < rule_data.length; i++) { %>
+                                <tr>
+                                    <td>Rule <%= i + 1 %></td>
+                                    <td><%= rule_data[i].name %></td>
+                                    <td><%= rule_data[i].points %></td>
+                                </tr>
+                                <% } } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="/rules" class="btn btn-success w-100 mt-auto">Explore more</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ('partials/modalPrediction.ejs') %> <%- include ('partials/footer.ejs') %>
+<script src="/assets/js/predictAjax.js"></script>
+<%- include ('partials/end.ejs') %>

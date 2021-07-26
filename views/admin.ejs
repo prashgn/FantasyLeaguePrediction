@@ -1,0 +1,194 @@
+<%- include ('partials/header.ejs') %> <%- include ('partials/headerNav.ejs') %>
+<div class="main-content">
+    <div class="container-fluid h-100">
+        <div class="h-100 py-3">
+            <div class="card bg-dark shadow-lg">
+                <div class="card-body my-2 text-center text-white">
+                    <div class="card-text">
+                        <% var match_data = data[0]; %> <% if ((typeof match_data) == "object") { %>
+                        <form action="/admin" method="post">
+                            <br />
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    readonly
+                                    value="Id - <%= match_data[0].matchid %> - Match <%= match_data[0].matchnum %> &nbsp; <%= match_data[0].teamA %> vs <%= match_data[0].teamB %> on <%= match_data[0].date %> &nbsp; <%= match_data[0].time %>"
+                                />
+                                <input
+                                    id="matchid"
+                                    name="matchid"
+                                    type="hidden"
+                                    value="<%= match_data[0].matchid %>"
+                                />
+                                <button type="submit" class="btn btn-success btn-block mt-5">
+                                    Populate Default Time for Match - Stagewise
+                                </button>
+                            </div>
+                        </form>
+                        <% } %> <% if (( (typeof match_data) == "string") & (match_data !== "" )) {
+                        %>
+                        <h6 class="alert alert-primary mt-4"><%= match_data %></h6>
+                        <% } %>
+                    </div>
+                    <div class="card bg-dark shadow-lg">
+                        <div class="card-body my-2 text-center text-white">
+                            <h6 class="card-title">
+                                <a href="#" class="text-white">Modify Match Details</a>
+                            </h6>
+                            <div class="card-text">
+                                <% var result_data = data[1]; %> <% if ((typeof result_data) ==
+                                "object") { %>
+
+                                <form action="/admin/saveMatchData/" method="post">
+                                    <div class="form-group">
+                                        <div class="card bg-dark shadow-lg">
+                                            <div class="card-body my-2 text-center text-white">
+                                                <table class="table text-white">
+                                                    <thead class="thead-light">
+                                                        <tr>
+                                                            <th>Rule</th>
+                                                            <th>Value</th>
+                                                            <th>Time</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <input
+                                                            id="matchid"
+                                                            name="matchid"
+                                                            type="hidden"
+                                                            value="<%= match_data[0].matchid %>"
+                                                        />
+                                                        <% var player_data = data[2]; %> 
+                                                        <% var team_data = data[3]; %> 
+                                                        <tr>
+                                                            <% for (var i = 0; i <
+                                                            result_data.length; i++) { %>
+
+                                                            <td>
+                                                                <%= result_data[i].name %>
+                                                                <input
+                                                                    id="resultid<%=result_data[i].id%>"
+                                                                    name="resultid<%=result_data[i].id%>"
+                                                                    value="<%= result_data[i].id %>"
+                                                                    type="hidden"
+                                                                />
+                                                            </td>
+                                                           <td>
+                                                                <% switch (result_data[i].selection) { case 'team': %>
+    
+<select class='custom-select input-group-sm' id="ruleidval<%=result_data[i].id%>" name="ruleidval<%=result_data[i].id%>" ><option selected>Choose value...</option>
+<% for (var j = 0; j < team_data.length; j++) { %>
+<option value="<%=team_data[j].teamid%>"
+          <% if (result_data[i].actual_value == team_data[j].teamid ) { %>  
+       selected
+        <% } %>       
+        
+        > <%=team_data[j].teamname%>  </option>
+<% } %>
+</select>
+  <%   break ; case 'player':  %>
+<select class='custom-select input-group-sm' id="ruleidval<%=result_data[i].id%>" name="ruleidval<%=result_data[i].id%>" ><option selected>Choose value...</option>
+<% for (var j = 0; j < player_data.length; j++) { %>
+<option value="<%=player_data[j].playerid%>"
+       <% if (result_data[i].actual_value == player_data[j].playerid ) { %>  
+       selected
+        <% } %> 
+        > <%=player_data[j].playername%>  </option>
+<% } %>
+    
+</select>
+   <%    break ; default:     %>      
+                 <input
+                 id="ruleidval<%=result_data[i].id%>"
+                 name="ruleidval<%=result_data[i].id%>"
+                 value="<%= result_data[i].actual_value %>"
+                 type="number"
+             />                                                   
+                                         
+    <% } %>    
+                                                            </td>
+                                                            <td>
+                                                                <input
+                                                                    id="ruleiddt<%=result_data[i].id%>"
+                                                                    name="ruleiddt<%=result_data[i].id%>"
+                                                                    value="<%= result_data[i].mytime %>"
+                                                                />
+                                                            </td>
+                                                        </tr>
+                                                        <% } %>
+                                                    </tbody>
+                                                </table>
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-primary btn-block mt-5"
+                                                >
+                                                    Save Changes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <% } %>
+                                <form action="/admin/saveScoreData/" method="post">
+                                    <div class="form-group">
+                                        
+                                        <input
+                                            id="matchid"
+                                            name="matchid"
+                                            type="hidden"
+                                            value="<%= match_data[0].matchid %>"
+                                        />
+                                        
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success btn-block mt-5"
+                                        >
+                                            Populate record in the score table as per Stage
+                                        </button>
+                                    </div>
+                                </form>
+                                <form action="/admin/calcScoreRank/" method="post">
+                                    <div class="form-group">
+                                        <input
+                                            id="matchid"
+                                            name="matchid"
+                                            type="hidden"
+                                            value="<%= match_data[0].matchid %>"
+                                        />
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success btn-block mt-5"
+                                        >
+                                            Calculate Score, League Score and Rank
+                                        </button>
+                                    </div>
+                                </form>                               
+                                    OR
+                                <form action="/admin/calcScoreRankNRR/" method="post">
+                                    <div class="form-group">
+                                        <input
+                                            id="matchid"
+                                            name="matchid"
+                                            type="hidden"
+                                            value="<%= match_data[0].matchid %>"
+                                        />
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success btn-block mt-5"
+                                                 
+                                        >
+                                            NRR
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ('partials/footer.ejs') %> <%- include ('partials/end.ejs') %>

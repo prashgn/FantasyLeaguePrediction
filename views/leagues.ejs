@@ -1,0 +1,86 @@
+<%- include ('partials/header.ejs') %> <%- include ('partials/headerNav.ejs') %>
+<div class="main-content">
+    <div class="container-fluid h-100">
+        <div class="card-deck h-100">
+            <div class="card bg-dark my-3 shadow-lg">
+                <div class="card-body d-flex flex-column text-center text-white">
+                    <h4 class="card-title">
+                        <a href="#" class="text-white">Leagues</a>
+                        <hr />
+                    </h4>
+
+                    <div class="card-text">
+                        <div class="d-flex justify-content-between col-sm-12">
+                            <a
+                                id="joinleague"
+                                href="#"
+                                class="btn btn-sm btn-success col-sm-5 m-2"
+                                data-toggle="modal"
+                                data-target="#modalJoinLeague"
+                            >
+                                Join League
+                            </a>
+                            <a
+                                id="createleague"
+                                href="#"
+                                class="btn btn-sm btn-success col-sm-5 m-2"
+                                data-toggle="modal"
+                                data-target="#modalCreateLeague"
+                            >
+                                Create League
+                            </a>
+                        </div>
+                        <table id="leagues" class="table text-white">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th></th>
+                                    <th>#</th>
+                                    <th>League Name</th>
+                                    <th>Rank / Members</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var league_data = data; %> <% if (league_data.length < 1) { %>
+                                <tr>
+                                    <td colspan="5">No league found</td>
+                                </tr>
+                                <% } else { %> <% for (var i = 0; i < league_data.length; i++) { %>
+                                <tr>
+                                    <td>
+                                        <% if (league_data[i].admin == 1) { %>
+                                        <i class="fa fa-user-secret" aria-hidden="true"></i>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <%= i+1 %>
+                                    </td>
+                                    <td>
+                                        <%= league_data[i].leaguename %>
+                                        <span style="font-size: 10px;">
+                                            for <%= league_data[i].seriesname %> <%=
+                                            league_data[i].seriesyear %> series
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <% if (league_data[i].rank == null) { %> - <% } else { %>
+                                        <%= league_data[i].rank %> <% } %> / <%=
+                                        league_data[i].totalmember %>
+                                        <input
+                                            type="hidden"
+                                            value="<%= league_data[i].leagueid %>"
+                                        />
+                                    </td>
+                                </tr>
+                                <% } } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ('partials/modalLeague.ejs') %> <%- include ('partials/footer.ejs') %>
+<script src="/assets/js/leagueAjax.js"></script>
+<%- include ('partials/end.ejs') %>

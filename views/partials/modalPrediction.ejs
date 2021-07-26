@@ -1,0 +1,64 @@
+<!-- Prediction Modal -->
+<div
+    class="modal fade"
+    id="modalPredict"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalPredictTitle"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title text-white" id="modalPredictLongTitle">Predictions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <div class="col-sm-12 text-center">
+                            <span id="alert" class="small m-0 alert alert-danger collapse"></span>
+                        </div>
+                        <form action="/predict" method="POST" id="predictForm"></form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" onclick="$('#alert').collapse('hide');">Close</button>
+                <button type="button" class="btn btn-sm btn-success" id="predictSubmit">
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Result Modal -->
+<div
+    class="modal fade"
+    id="modalResult"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalResultTitle"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title text-white" id="modalResultLongTitle">Results</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="resultdiv" class="card bg-dark text-white">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

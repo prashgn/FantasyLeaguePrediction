@@ -1,0 +1,97 @@
+<!-- Create League Modal -->
+<div
+    class="modal fade"
+    id="modalCreateLeague"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalCreateLeagueTitle"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title text-white" id="modalCreateLeagueLongTitle">
+                    Create New League
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <form action="/createleague" method="POST" id="createLeagueForm">
+                            <label class="mt-3" for="createLeagueName">League Name</label>
+                            <input
+                                type="text"
+                                class="form-control input-group-sm"
+                                id="createLeagueName"
+                                name="createLeagueName"
+                            />
+                            <label class="mt-3" for="seriesName">Series</label>
+                            <select
+                                class="custom-select input-group-sm"
+                                id="seriesName"
+                                name="seriesName"
+                            >
+                                <option selected>Choose value...</option>
+                            </select>
+                        </form>
+                    </div>
+                    <span id="createLeagueMsg" class="alert alert-danger m-4"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-sm btn-success" id="createLeagueSubmit">
+                    Create League
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Join League Modal -->
+<div
+    class="modal fade"
+    id="modalJoinLeague"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modalJoinLeagueTitle"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title text-white" id="modalJoinLeagueLongTitle">
+                    Join New League
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <form action="/joinleague" method="POST" id="joinLeagueForm">
+                            <label class="mt-3" for="joinLeagueName">League Name</label>
+                            <input
+                                type="text"
+                                class="form-control input-group-sm"
+                                id="joinLeagueName"
+                                name="joinLeagueName"
+                            />
+                        </form>
+                    </div>
+                    <span id="joinLeagueMsg" class="alert alert-danger m-4"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-sm btn-success" id="joinLeagueSubmit">
+                    Join League
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
