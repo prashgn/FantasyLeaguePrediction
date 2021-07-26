@@ -1,0 +1,50 @@
+cd lp_v0
+npm init
+npm install
+
+service mysql start
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'mpt@titans_2020';
+FLUSH PRIVILEGES;
+exit;
+
+service mysql restart
+
+mysql-u root -p
+mpt@titans_2020
+
+---------------------------
+mysql -u root -pmpt@titans_2020
+
+mysqldump -u root -proot competition rule > few_rows_dump.sql
+
+mysqldump -u root -pmpt@titans_2020 competition userleague > ./lp_v0/dumps/userleague_dump_10_10.sql
+
+mysqldump -u root -pmpt@titans_2020 competition > ./lp_v0/dumps/full_db_dump10_11_20.sql
+
+mysqldump -u root -pmpt@titans_2020 competition userleague > ./lp_v0/dumps/userleague_dump_10_11.sql
+
+mysqldump -u root -pmpt@titans_2020 competition > ./lp_v0/dumps/full_db_dump10_11_20_afterFinal.sql
+
+source /workspace/mpt/lp_v0/scripts/table_script.sql
+
+
+
+
+----------------------------------
+update score set score_value = 15 where fk_m_id = 23 and fk_r_id = 3 and predict_value = 40 ;
+update score set score_value = 0 where fk_m_id = 23 and fk_r_id = 3 and predict_value = 45 ;
+
+
+update result set actual_value = 40 where fk_m_id = 23 and fk_r_id = 3;
+
+
+update userleague set score = 211 where fk_u_id = 69 ;
+update userleague set score = 420 where fk_u_id = 3 ;
+
+
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (2,5,1,57,'DUBAI','2020-11-05 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (6,8,1,58,'ABU DHABI','2020-11-06 14:00:00');
+
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (2,8,1,59'ABU DHABI','2020-11-08 14:00:00');

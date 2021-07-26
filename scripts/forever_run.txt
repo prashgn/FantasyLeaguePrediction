@@ -1,0 +1,36 @@
+https://stackabuse.com/running-node-apps-with-forever/
+
+https://help.goorm.io/en/goormide/18.faq/language-and-environment/always-on
+https://help.goorm.io/en/goormide/18.faq/language-and-environment/always-on-not-work
+https://help.goorm.io/ko/goormide/18.faq/language-and-environment/always-on-not-work#node
+
+npm install -g forever
+forever start app.js
+forever list
+
+forever stopall
+
+ps -aux | grep a.ou
+ps -aux | grep a.out
+
+ps -ef | grep a.out
+kill -TERM PID 
+
+---------------------
+bash hello.sh
+
+nohup ./hello.sh
+
+cat nohup.out
+
+------
+
+npm install -g forever
+forever start hello.sh
+
+$ forever -m 1 
+
+forever start -a app.js
+
+forever list
+

@@ -1,0 +1,15 @@
+delete from score;
+delete from predict_backup;
+delete from predict;
+delete from userleague where fk_l_id > 1;
+delete from userleague where id = 17;
+delete from league where id > 1;
+update userleague set ranked = null , score =  null;
+update match_det set completed = null;
+
+delete from result;
+
+
+Delete user
+delete from userleague where fk_u_id = 13;
+delete from users where id = 13;
