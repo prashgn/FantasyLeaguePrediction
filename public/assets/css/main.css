@@ -1,0 +1,91 @@
+html,
+body {
+    height: 100%;
+}
+body {
+    background: url('../img/bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    /*
+    font-family: 'Baloo Tamma 2';
+    font-family: 'Red Rose';
+    font-family: 'Lemonada';
+    font-family: 'Acme';
+    font-family: 'Kanit';
+    font-family: 'Comfortaa';
+    font-family: 'Source Code Pro';
+    font-family: 'Dosis';
+    font-family: 'Nunito';
+    */
+    font-family: 'Nunito';
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+.main-content {
+    flex: 1;
+}
+.card {
+    opacity: 90%;
+}
+/*************************/
+/*tr.hide-table-padding td {
+    padding: 0;
+}
+
+td.expand-button {
+    position: relative;
+}
+
+.accordion-toggle .expand-button:after
+{
+    position: absolute;
+    left:.75rem;
+    top: 50%;
+    transform: translate(0, -50%);
+    content: '-';
+}
+.accordion-toggle.collapsed .expand-button:after
+{
+    content: '+';
+}*/
+/*************************/
+/*.card-deck {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-gap: .5rem;
+}*/
+@media screen and (max-width: 768px) {
+    /*.col-sm-4 {
+        text-align: center;
+        margin: 25px 0;
+    }
+    .col-sm-6 {
+        text-align: center;
+        margin: 25px 0;
+    }
+    .card {
+        height: 100%;
+    }*/
+}
+
+@keyframes slide {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(70%);
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: translateY(0%);
+    }
+}
+
+@-webkit-keyframes slide {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(70%);
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: translateY(0%);
+    }
+}
