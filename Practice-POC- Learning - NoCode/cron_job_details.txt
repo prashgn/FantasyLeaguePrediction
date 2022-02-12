@@ -1,0 +1,171 @@
+
+
+find -name "node"
+/usr/bin/node tp
+/usr/bin/node /workspace/mpt_PREPROD/lp_Preprod/tp
+
+* * * * * echo "hello" >> /workspace/mpt_PREPROD/lp_Preprod/test/mynewfile1.txt
+* * * * * /usr/bin/node /workspace/mpt_PREPROD/lp_Preprod/tp
+* * * * * mysql -uroot -pmpt@titans_2020 -e "SELECT * FROM users WHERE id = 1;SELECT * FROM users WHERE id = 2;" competition > /workspace/mpt_PREPROD/lp_Preprod/test/smiths.txt
+
+Esc: wq
+Esc: x
+Ctrl+Shift+C
+Ctrl+Shift+V
+-----------------------------------------------------
+
+crontab -e
+crontab -l
+
+sudo service cron status
+sudo service cron start
+
+----------------------------------------------------
+
+tp.js
+var fs = require('fs');
+
+fs.appendFile('/workspace/mpt_PREPROD/lp_Preprod/test/mynewfile1.txt', 'tada content!', function (err) {
+  if (err) throw err;
+  console.log('Saved!');
+});
+
+---------------------------------
+
+npm install nodemailer
+
+
+function main(){
+  var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+  service: 'outlook',
+  port: 587,
+  auth: {
+    user: 'pls_2020@outlook.com',
+    pass: 'mpt@titans_2020'
+  },
+  tls: {
+                rejectUnauthorized: false
+            }
+});
+
+var mailOptions = {
+  from: 'pls_2020@outlook.com',
+  to: 'mayurm.info@gmail.com, nairprashantgangadharan@gmail.com, tarandeepsingh1153@gmail.com',
+  subject: 'Sending Email using Node.js',
+  text: 'Finally Done!'
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+    console.log('Message sent: %s', info.messageId);
+    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  }
+    
+});
+
+}
+
+main();
+---------------------- The below sample is with error handling which is correct ------------------
+https://strongloop.com/strongblog/robust-node-applications-error-handling/
+
+var nodemailer = require('nodemailer')
+var transport = nodemailer.createTransport('SMTP', { // [1]
+  service: "Gmail",
+  auth: {
+    user: "gmail.user@gmail.com",
+    pass: "userpass"
+  }
+})
+
+if (process.env.NODE_ENV === 'production') { // [2]
+  process.on('uncaughtException', function (er) {
+    console.error(er.stack) // [3]
+    transport.sendMail({
+      from: 'alerts@mycompany.com',
+      to: 'alert@mycompany.com',
+      subject: er.message,
+      text: er.stack // [4]
+    }, function (er) {
+       if (er) console.error(er)
+       process.exit(1) // [5]
+    })
+  })
+}
+----------------------
+
+/* npm install node-schedule */
+  var schedule = require('node-schedule');
+ 
+var j = schedule.scheduleJob('*/1 * * * *', function(){
+  console.log('The answer to life, the universe, and everything!');
+});
+------------------------
+
+https://editor.p5js.org/
+npm install http-Server
+npm install p5-manager
+p5 generate --bundle "mysketch"
+
+The Coding Train
+
+https://www.youtube.com/watch?v=QO4NXhWo_NM&list=PLRqwX-V7Uu6bKLPQvPRNNE65kBL62mVfx&ab_channel=TheCodingTrain
+	16.11: Promises Part 1 - Topics of JavaScript/ES6
+	16.12: Promises Part 2 - Topics of JavaScript/ES6
+	16.13: async/await Part 1 - Topics of JavaScript/ES8
+	16.14: async/await Part 2 - Topics of JavaScript/ES8
+	16.15: Promise.all() - Topics of JavaScript/ES6
+	16.16: try / catch with Promises - Topics of JavaScript/ES6
+	
+1.1: fetch() - Working With Data & APIs in JavaScript
+1.2 Tabular Data - Working With Data & APIs in JavaScript
+1.3: Graphing with Chart.js - Working With Data & APIs in JavaScript
+
+2.1 Server-side with Node.js - Working with Data and APIs in JavaScript
+2.2 Geolocation Web API - Working with Data and APIs in JavaScript
+2.3 HTTP Post Request with fetch() - Working with Data and APIs in JavaScript
+
+10.4: Loading JSON data from a URL (Asynchronous Callbacks!) - p5.js Tutorial
+10.5: Working with APIs in Javascript - p5.js Tutorial
+
+15.1: What is Node.js? - Twitter Bot Tutorial
+15.2: What is NPM? - Twitter Bot Tutorial
+15.3: Setting up a Twitter app - Twitter Bot Tutorial
+15.4: Twitter API Basics - Twitter Bot Tutorial
+15.5: Scheduling Tweets Using setInterval() - Twitter Bot Tutorial
+15.6: Tweeting images with Processing - Twitter Bot Tutorial
+15.7: A Bot That Replies - Twitter Bot Tutorial
+15.8: Heroku Deployment - Twitter Bot Tutorial
+15.9: Amazon EC2 Deployment - Twitter Bot Tutorial
+
+
+https://www.youtube.com/watch?v=lmgcMPRa1qw&list=PLRqwX-V7Uu6bb7z2IJaTlzwzIg_5yvL4i&index=2&ab_channel=TheCodingTrain
+
+---------------------
+Express Perf
+
+https://expressjs.com/en/advanced/best-practice-performance.html
+
+https://sematext.com/blog/expressjs-best-practices/
+
+
+--------------------------
+DB best practise
+https://www.youtube.com/channel/UC_ML5xP23TOWKUcc-oAE_Eg
+
+
+Tasks Pending
+	1) Correct the Admin page layout
+	2) Take a backup of uerleague table on click of button on the Admin page.
+	3) Move the code to Github along with detail and screenshots
+	4) 
+	
+-----------------------------
+Code Vulneability -
+https://www.youtube.com/watch?v=Xy1K8ODZC8w&ab_channel=freeCodeCamp.org
+https://snyk.io/

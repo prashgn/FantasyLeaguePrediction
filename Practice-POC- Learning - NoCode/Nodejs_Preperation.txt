@@ -1,0 +1,1153 @@
+https://in.tradingview.com/rest-api-spec/
+
+Derek Banas
+Design Pattern
+https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E07&index=1
+
+Object Oriented Design
+https://www.youtube.com/watch?v=fJW65Wo7IHI&list=PLGLfVvz_LVvS5P7khyR4xDp7T9lCk9PgE&index=1
+
+Codes
+http://www.newthinktank.com/2011/12/
+Jave code starts from the above month
+
+--------------------------------------------------
+The Net Ninja - NodeJS
+https://www.youtube.com/watch?v=w-7RQ46RgxU&list=PL4cUxeGkcC9gcy9lrvMJ75z9maRw4byYp
+
+Started - https://www.youtube.com/watch?v=qSAze9b0wrY&list=PL4cUxeGkcC9gcy9lrvMJ75z9maRw4byYp&index=11
+
+Creating Server - 12-------------------------------------------------
+
+/*
+http.createServer(function(req,res){
+    res.write("welcome moksh")
+    res.end()
+}).listen(8080)
+*/
+var http = require('http')
+
+var server = http.createServer(function(req,res){
+    console.log('Request was made on url ' + req.url);
+    res.writeHead(200,{'Content-Type': 'text/plain'});
+    res.end('Hi Moki');
+});
+    
+server.listen(8080);
+console.log('Listening to port 8080');
+
+Readable Streams and Writeable Streams - 14 and 15--------------------
+
+var http = require('http')
+var fs = require('fs');
+
+var myReadstream =  fs.createReadStream(__dirname + '/readMe.txt', 'utf8');
+var myWritestream = fs.createWriteStream(__dirname + '/writeMe.txt');
+
+myReadstream.on('data', function(chunk) { 
+    console.log('new chunk received'); 
+    myWritestream.write(chunk);
+});
+
+Pipes - 16 ------------------------------
+---Excercise 1 ---
+var http = require('http')
+var fs = require('fs');
+
+var myReadstream =  fs.createReadStream(__dirname + '/readMe.txt', 'utf8');
+var myWritestream = fs.createWriteStream(__dirname + '/writeMe.txt');
+
+myReadstream.pipe(myWritestream);
+
+---Excercise 2 ---
+var http = require('http')
+var fs = require('fs');
+
+
+var server = http.createServer(function(req,res){
+    console.log('Request was made on url ' + req.url);
+    res.writeHead(200,{'Content-Type': 'text/plain'});
+    var myReadStream =  fs.createReadStream(__dirname + '/readMe.txt', 'utf8');
+    myReadStream.pipe(res);
+});
+    
+server.listen(8080);
+console.log('Listening to port 8080');
+
+Serving HTML pages - 17 ---
+HTML page ----
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <style> 
+            body{background: skyblue; font-family: verdana; color: #fff; padding: 30px;}
+            h1{font-size: 48px; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
+            p{font-size: 16px; text-align: center;}
+        </style>
+        <title>My First Webpage</title> 
+        <meta charset="UTF-8"> 
+        <meta name="description" content="This is my NOdejs html page."> 
+    </head> 
+    <body> 
+        <h1>Ganapati Bappa Moraya</h1> 
+        <p>Welcome to <em>our</em> team.</p> 
+        <p>This site will be <strong>first<strong> stepping stone.</p> 
+            <a href="http://www.google.com">Google</a> 
+    </body> 
+</html>
+---------
+js file -----
+var http = require('http')
+var fs = require('fs');
+
+var server = http.createServer(function(req,res){
+    console.log('Request was made on url ' + req.url);
+    res.writeHead(200,{'Content-Type': 'text/html'});
+    var myReadStream =  fs.createReadStream(__dirname + '/index.html', 'utf8');
+    myReadStream.pipe(res);
+});
+    
+server.listen(8080);
+console.log('Listening to port 8080');
+-----------------------------------------------------
+
+Serving Serving JSON Data - 18 ---
+var http = require('http')
+
+
+var server = http.createServer(function(req,res){
+    console.log('Request was made on url ' + req.url);
+    res.writeHead(200,{'Content-Type': 'application/json'});
+    var MyObj = {
+        name: 'Prashant',
+        age: 10
+    };
+    res.end(JSON.stringify(MyObj));
+});
+    
+server.listen(8080);
+console.log('Listening to port 8080');
+------------------------------------
+
+Basic Routing - 19
+
+var http = require('http');
+var fs = require('fs');
+
+var server = http.createServer(function(req,res){
+    console.log('Request was made on url ' + req.url);
+    if(req.url === '/home' || req.url === '/'){
+        res.writeHead(200, 'text/html');
+        var myReadstream =  fs.createReadStream(__dirname + '/index.html', 'utf8').pipe(res);
+    } else if(req.url === '/contact'){
+        res.writeHead(200, 'text/html');
+        var myReadstream =  fs.createReadStream(__dirname + '/contact.html', 'utf8').pipe(res);
+    } else if(req.url === '/api'){
+        res.writeHead(200,{'Content-Type': 'application/json'});
+        var MyObj = {
+            name: 'Prashant',
+            age: 10
+        };
+       res.end(JSON.stringify(MyObj));
+    } else{
+        res.writeHead(404, 'text/html');
+        var myReadstream =  fs.createReadStream(__dirname + '/404.html', 'utf8').pipe(res);
+    }
+    
+});
+    
+server.listen(8080);
+console.log('Listening to port 8080');
+
+-----contact.html
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <style> 
+            body{background: skyblue; font-family: verdana; color: #fff }
+        </style>
+        <title>My First Webpage</title> 
+        <meta charset="UTF-8"> 
+        <meta name="description" content="This is my NOdejs html page."> 
+    </head> 
+    <body> 
+        <h1>Ganapati Bappa Moraya</h1> 
+        <p>Contact us</p> 
+        <p>This site will be <strong>first<strong> stepping stone.</p> 
+            <a href="http://www.google.com">Google</a> 
+    </body> 
+</html>
+--------------------
+
+-----404.html
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <style> 
+            body{background: skyblue; font-family: verdana; color: #fff }
+        </style>
+        <title>My First Webpage</title> 
+        <meta charset="UTF-8"> 
+        <meta name="description" content="This is my NOdejs html page."> 
+    </head> 
+    <body> 
+        <h1>Ganapati Bappa Moraya</h1> 
+        <p>Oops</p> 
+        
+    </body> 
+</html>
+
+-------------
+The Node Package Manager - 20
+npm install express
+npm uninstall express
+
+--------------------------------------
+21 - The package.json File
+npm init
+
+later u can install 
+npm install express -save
+the above command will add to the package.json file
+All the dependencies mentioned in the package.json file is installed when package is shared
+you will have to manually remove the dependency if some package is uninstalled
+
+----------------------------------------
+
+22- Nodemon
+it helps aut refresh
+npm install nodemon -g
+(g is installed globally)
+
+Instead of using run main
+you will have to use nodemon main.js
+
+-------------------------------------------------
+23 and 24 - express and routes
+
+var express = require("express");
+
+var app = express();
+
+app.get('/',function(req,res){
+    res.send('this is the whole page');
+});
+app.get('/contact',function(req,res){
+    res.send('this is the contact page');
+});
+app.get('/profile/:id',function(req,res){
+    res.send('this is the profile page ' + req.params.id);
+    
+});
+
+app.listen(8080);
+
+-------------------------------------------------
+
+25 and 26 - template engines - In this Tutorial EJS is being used
+npm install ejs
+Create a folder views and copy the contents index.html and paste it into profiles.ejs and put dynamic content in there
+profiles.ejs
+
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <style> 
+            body{background: skyblue; font-family: verdana; color: #fff; padding: 30px;}
+            h1{font-size: 48px; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
+            h2{font-size: 30px; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
+            p, li{font-size: 16px; text-align: center;}
+        </style>
+        <title>My Profile Webpage</title> 
+        <meta charset="UTF-8"> 
+        <meta name="description" content="This is my Nodejs html page."> 
+    </head> 
+    <body> 
+        <h1>Ganapati Bappa Moraya</h1> 
+        <p>Welcome to dynamic profile page of <%= person %> </p> 
+        <p> <strong>Age: <%= data.age %> <strong> </p> 
+        <p> <strong>Naam: <%= data.name %> <strong> </p> 
+            
+        <h2>Hobbies</h2>
+        <ul>
+           <% data.hobbies.forEach(function(item){ %>
+                <li><%=item%></li>
+           <% }); %>
+        </ul>
+            
+    </body> 
+</html>
+-----------------------------
+
+app.js
+var express = require("express");
+
+var app = express();
+
+app.set('view engine', 'ejs');
+
+app.get('/',function(req,res){
+    res.sendFile(__dirname + '/Sample1/index.html');
+});
+app.get('/contact',function(req,res){
+    res.sendFile(__dirname + '/Sample1/contact.html');
+});
+
+var MyObj = {
+        name: 'Prashant',
+        age: 10,
+        hobbies: ['eating','fishing','playing']
+};
+
+app.get('/profile/:name',function(req,res){
+    /*res.send('this is the profile page ' + req.params.name);*/
+    res.render('profiles',{person: req.params.name, data: MyObj}); /* The default behavious is to look in the views folder */
+});
+
+app.listen(8080);
+
+-------------------------------------------------
+27 - partial template
+Details in "Nodejs.txt - Lesson 27" - in views and partials folder
+
+------------------------------------------------
+28 - Middleware & Static Files
+/*
+app.use('/assets',function(req,res,next){
+    next();
+});
+*/
+app.use('/assets',express.static('assets'));
+/*This is to provide access to the css files. THe above code will register those*/
+------------------------------------------------
+29 - Query Strings
+https://pgn001njsql.run-ap-south1.goorm.io/contact?dept=marketing
+
+app.js
+...
+app.get('/contact',function(req,res){
+    res.render('contact', {qs: req.query});
+});
+
+contact.ejs
+...
+ <p><%= qs.dept %></p> 
+ 
+ ----
+ https://pgn001njsql.run-ap-south1.goorm.io/contact?dept=marketing&name=prashant
+ 
+ contact.ejs---
+ <!DOCTYPE html> 
+<html> 
+    <head> 
+        <style> 
+            body{background: skyblue; font-family: verdana; color: #fff }
+        </style>
+        <title>My First Webpage</title> 
+        <meta charset="UTF-8"> 
+        <meta name="description" content="This is my NOdejs html page."> 
+    </head> 
+    <body> 
+        <%- include ('partials/nav.ejs') %>
+        <h1>Ganapati Bappa Moraya</h1> 
+        <p>Contact us</p> 
+     
+        
+        <form id="contact-form">
+            <label for="who">Whom do you want to contact?</label>
+            <input type="text" name="who" value=<%= qs.name %>>
+            <label for="dept">Department Name?</label>
+            <input type="text" name="dept" value=<%= qs.dept %>>
+            <input type="submit" value="submit" />
+        </form>
+            
+    </body> 
+</html>
+
+app.js
+...
+app.get('/contact',function(req,res){
+    res.render('contact', {qs: req.query});
+});
+------------------------------------------
+30 - Post Request 
+We would need the body-parser Middleware
+npm install body-parser
+
+The details available in - Nodejs.txt - Lesson 30
+ 
+app.js
+app.get('/contact',function(req,res){
+    res.render('contact', {qs: req.query});
+});
+
+app.post('/contact', urlencodedParser, function (req, res) {
+  res.render('contact-success',{data: req.body});
+});
+
+-----
+contact-success.ejs
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <style> 
+            body{background: skyblue; font-family: verdana; color: #fff; padding: 30px;}
+            h1{font-size: 48px; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
+            h2{font-size: 30px; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
+            p, li{font-size: 16px; text-align: center;}
+        </style>
+        <title>My Profile Webpage</title> 
+        <meta charset="UTF-8"> 
+        <meta name="description" content="This is my Nodejs html page."> 
+    </head> 
+    <body> 
+        <%- include ('partials/nav.ejs') %>
+        <h1>Ganapati Bappa Moraya</h1> 
+        <p>You contacted <%= data.who %> from <%= data.dept %> </p> 
+    </body> 
+</html>
+
+----------------------------------------------------
+To Do app list - "Todo App - Net Ninja - 31-37 videos" Folder
+https://www.youtube.com/watch?v=edOmvng5IQc&list=PL4cUxeGkcC9gcy9lrvMJ75z9maRw4byYp&index=31
+
+npm install express
+npm install ejs
+npm install body-parser
+
+To get the has for integrity - https://www.srihash.org/
+
+Model
+	Data
+		Todo
+		Users
+
+View
+	Template files
+		todo.ejs
+		account.ejs
+
+Controller
+	Control the apps(Section)
+		todoController
+		userController
+		
+var date = [{item: 'get milk'}, {item: 'keep singing'}, {item: 'enjoy'}];
+
+The details could be found in the following folder - I will do tht tomorrow
+
+-------------------------------------------------------
+Net Ninja crack course - https://www.youtube.com/playlist?list=PL4cUxeGkcC9jsz4LDYc6kv3ymONOKxwBU
+
+-----------------------------------------------------
+
+SQL connection through Goormide
+
+service mysql start
+
+mysql
+or
+mysql -u root -p
+the password tht i entered was root.  
+(mysql -h host -u user -p dbname)
+
+exit
+service mysql restart
+
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root';
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
+mysql> FLUSH PRIVILEGES;
+mysql>  exit;
+service mysql restart
+
+/*to clear workspace*/
+cd /workspace/pgn001njsql; clear
+cd /workspace/ampt; clear
+cd /workspace/ampt/nodejs-express-mysql-master; clear
+
+grep -irns "passport.authenticate" *  | more
+
+To run mysql through command prompt -
+mysql -u USERNAME -p
+mysql -u root -p
+It will prompt for password
+
+show databases;
+use DBNAME;
+
+select curdate();
+
+mysql> HELP rep%
+
+mysqladmin
+
+------
+CREATE DATABASE test;
+CREATE DATABASE testdb;
+use test;
+CREATE TABLE pet (name VARCHAR(20), val1 VARCHAR(20), val2 VARCHAR(20));
+SHOW TABLES;
+DESCRIBE pet;
+
+CREATE DATABASE testdb;
+show databases;
+use testdb;
+
+CREATE TABLE IF NOT EXISTS `customers` (
+  id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  email varchar(255) NOT NULL,
+  name varchar(255) NOT NULL,
+  active BOOLEAN DEFAULT false
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+SHOW TABLES;
+DESCRIBE customers;
+
+INSERT INTO customers
+VALUES (1,'prash@gmail.com','prash',true);
+
+https://bezkoder.com/node-js-rest-api-express-mysql/
+
+https://dev.mysql.com/doc/refman/8.0/en/loading-tables.html
+This site is fantastic - https://dev.mysql.com/ - Documentation
+
+INSERT INTO pet
+VALUES ('name1','val1',NULL);
+
+select * from pet;
+DELETE FROM pet;
+UPDATE pet SET val2 = 'val2' WHERE name = 'name1';
+--------------------------------------------------------------------------------
+
+let mysql = require('mysql');
+let connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'test'
+});
+
+connection.connect(function(err) {
+  if (err) {
+    return console.error('error: ' + err.message);
+  }
+
+    console.log('The database connected.');
+});
+
+/* Method 1 */
+ let sql = 'SELECT * FROM pet'; 
+/*let sql = "INSERT INTO pet(name,val1) VALUES('name2','val2')";*/
+/* let sql = "UPDATE pet SET val2 = 'val2' WHERE name = 'name2'";  */
+/* let sql = "SELECT JSON_ARRAYAGG(JSON_OBJECT('item', name)) from pet"; */
+
+connection.query(sql, (error, results, fields) => {
+  if (error) {
+    return console.error(error.message);
+  }
+  console.log(results);
+});
+
+
+/* Method 2 */
+// update statment
+/*
+let sql = 'UPDATE pet SET val2 = ? WHERE name = ?';
+
+let data = ['val3', 'name2'];
+
+// execute the UPDATE statement
+connection.query(sql, data, (error, results, fields) => {
+  if (error){
+    return console.error(error.message);
+  }
+  console.log('Rows affected:', results.affectedRows);
+});
+*/
+
+
+connection.end(function(err) {
+  if (err) {
+    return console.log('error:' + err.message);
+  }
+  console.log('Close the database connection.');
+});
+
+----------> https://www.sitepoint.com/using-node-mysql-javascript-client/
+Need to check this site seems nice
+
+--------------------------------------------------------------------------------
+
+let sql = 'UPDATE pet
+           SET val2 = ?
+           WHERE name = ?';
+
+let data = ['val2', 'name2'];
+
+
+/*
+https://help.goorm.io/en/goormide/18.faq/language-and-environment/use-mysql-workbench-in-the-goormide
+Edit /etc/mysql/mysql.conf.d/mysqld.cnf as below.
+
+Link to modify the file in VI editor
+https://www.tutorialspoint.com/unix/unix-vi-editor.htm
+
+#bind-address = 127.0.0.1 Must be commented
+mysql --host=13.233.91.172 --port=55898
+*/
+
+
+
+----
+Install mysql
+npm install mysql
+
+----
+
+details
+https://www.youtube.com/watch?v=GaDhogkU3dE
+https://www.youtube.com/watch?v=AJvePoktbuI
+
+-------------------------------------------------------------------------------------
+freeCodeCamp.org
+Learn Node.js - Full Tutorial for Beginners
+https://www.youtube.com/watch?v=RLtyhwFtXQA&list=PLWKjhJtqVAbmGQoa3vFjeRbRADAOC9drk
+
+
+Login - 
+https://bezkoder.com/node-js-jwt-authentication-mysql/
+
+Executing (default): DROP TABLE IF EXISTS `users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER NOT NULL auto_increment , `username` VARCHAR(255), `email` VARCHAR(255), `password` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATE
+TIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): SHOW INDEX FROM `users`
+Executing (default): DROP TABLE IF EXISTS `roles`;
+Executing (default): CREATE TABLE IF NOT EXISTS `roles` (`id` INTEGER , `name` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+Executing (default): SHOW INDEX FROM `roles`
+Executing (default): DROP TABLE IF EXISTS `user_roles`;
+Executing (default): CREATE TABLE IF NOT EXISTS `user_roles` (`createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, `roleId` INTEGER , `userId` INTEGER , PRIMARY KEY (`roleId`, `userId`), FOREIGN KEY (`roleI
+d`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE=InnoDB;
+Executing (default): SHOW INDEX FROM `user_roles`
+Drop and Resync Database with { force: true }
+Executing (default): INSERT INTO `roles` (`id`,`name`,`createdAt`,`updatedAt`) VALUES (?,?,?,?);
+Executing (default): INSERT INTO `roles` (`id`,`name`,`createdAt`,`updatedAt`) VALUES (?,?,?,?);
+Executing (default): INSERT INTO `roles` (`id`,`name`,`createdAt`,`updatedAt`) VALUES (?,?,?,?);
+
+https://bezkoder.com/node-js-tutorial/
+
+
+https://bezkoder.com/sequelize-associate-many-to-many/
+
+https://bezkoder.com/node-js-express-sequelize-mysql/
+
+
+https://reqbin.com/
+Can be used to test GET and POST request
+POST - 
+https://awtaut.run-ap-south1.goorm.io/api/auth/signup
+
+{
+  "username": "prash",
+  "email": "prash@gmail.com",
+  "password": "yoyo",
+  "roles": ["moderator","user"]
+}
+{
+  "username": "taran",
+  "email": "taran@gmail.com",
+  "password": "yoyo",
+  "roles": ["admin","moderator","user"]
+}
+Resp -
+{
+    "message": "User registered successfully!"
+}
+
+https://reqbin.com/
+https://awtaut.run-ap-south1.goorm.io/api/auth/signin
+Content - 
+{
+  "username": "prash",
+  "password": "yoyo"
+}
+Resp
+
+{
+    "id": 1,
+    "username": "prash",
+    "email": "prash@gmail.com",
+    "roles": ["ROLE_USER", "ROLE_MODERATOR"],
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTk2OTgyNDY3LCJleHAiOjE1OTcwNjg4Njd9.fFqbgYxqMaVP07SLio62knMTJUO9oN_16mYB1X__mZM"
+}
+{
+    "id": 2,
+    "username": "taran",
+    "email": "taran@gmail.com",
+    "roles": ["ROLE_USER", "ROLE_MODERATOR", "ROLE_ADMIN"],
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNTk2OTgyNDI2LCJleHAiOjE1OTcwNjg4MjZ9.sCXJfL-00oemm4sS6mSeQjZyiQw3v4QK3JrJDyjVFkg"
+}
+
+Use this - https://reqbin.com/req/5k564bhv/get-request-with-bearer-token-authorization-header OR https://reqbin.com/
+Inside Content pass(the token is from above),
+x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNTk2OTgyNDI2LCJleHAiOjE1OTcwNjg4MjZ9.sCXJfL-00oemm4sS6mSeQjZyiQw3v4QK3JrJDyjVFkg
+https://awtaut.run-ap-south1.goorm.io/api/test/user
+the response - User Content.
+
+same could be followed for,
+https://awtaut.run-ap-south1.goorm.io/api/test/admin
+resp - {
+    "message": "Require Admin Role!"
+}
+https://awtaut.run-ap-south1.goorm.io/api/test/mod
+resp - Moderator Content.
+
+-----------------------------------------------------------------------
+Tutorials
+https://reqbin.com/ - post
+https://awtaut.run-ap-south1.goorm.io/api/tutorials
+Content - 
+{
+    "title": "JS: Node Tut #1",
+    "description": "Tut#1 Description"
+    "published": 1
+}
+Resp -
+{
+    "id": 1,
+    "title": "JS: Node Tut #1",
+    "description": "Tut#1 Description",
+    "published": true,
+    "updatedAt": "2020-08-08T16:58:29.137Z",
+    "createdAt": "2020-08-08T16:58:29.137Z"
+}
+
+Content
+{
+    "title": "JS: Node Tut #2",
+    "description": "Tut#2 Description"
+}
+Resp - 
+{
+    "id": 2,
+    "title": "JS: Node Tut #2",
+    "description": "Tut#2 Description",
+    "published": false,
+    "updatedAt": "2020-08-08T16:59:39.193Z",
+    "createdAt": "2020-08-08T16:59:39.193Z"
+}
+
+Content
+{
+    "title": "JS: Node Tut #3",
+    "description": "Tut#3 Description",
+    "published": 0
+}
+Resp -
+{
+    "id": 3,
+    "title": "JS: Node Tut #3",
+    "description": "Tut#3 Description",
+    "published": false,
+    "updatedAt": "2020-08-08T17:00:44.189Z",
+    "createdAt": "2020-08-08T17:00:44.189Z"
+}
+
+Content
+{
+    "title": "JS: Node Tut #4",
+    "description": "Tut#4 Description"
+}
+Resp -
+{
+    "id": 4,
+    "title": "JS: Node Tut #4",
+    "description": "Tut#4 Description",
+    "published": false,
+    "updatedAt": "2020-08-08T17:04:34.981Z",
+    "createdAt": "2020-08-08T17:04:34.981Z"
+}
+
+Content -
+{
+    "title": "JS: Node Tut #5",
+    "description": "Tut#5 Description",
+    "published": 1
+}
+Resp -
+{
+    "id": 5,
+    "title": "JS: Node Tut #5",
+    "description": "Tut#5 Description",
+    "published": true,
+    "updatedAt": "2020-08-08T17:05:05.501Z",
+    "createdAt": "2020-08-08T17:05:05.501Z"
+}
+
+tutorials
+https://reqbin.com/ - get
+https://awtaut.run-ap-south1.goorm.io/api/tutorials
+Content - 
+[{
+    "id": 1,
+    "title": "JS: Node Tut #1",
+    "description": "Tut#1 Description",
+    "published": true,
+    "createdAt": "2020-08-08T16:58:29.000Z",
+    "updatedAt": "2020-08-08T16:58:29.000Z"
+}, {
+    "id": 2,
+    "title": "JS: Node Tut #2",
+    "description": "Tut#2 Description",
+    "published": false,
+    "createdAt": "2020-08-08T16:59:39.000Z",
+    "updatedAt": "2020-08-08T16:59:39.000Z"
+}, {
+    "id": 3,
+    "title": "JS: Node Tut #3",
+    "description": "Tut#3 Description",
+    "published": false,
+    "createdAt": "2020-08-08T17:00:44.000Z",
+    "updatedAt": "2020-08-08T17:00:44.000Z"
+}, {
+    "id": 4,
+    "title": "JS: Node Tut #4",
+    "description": "Tut#4 Description",
+    "published": false,
+    "createdAt": "2020-08-08T17:04:34.000Z",
+    "updatedAt": "2020-08-08T17:04:34.000Z"
+}, {
+    "id": 5,
+    "title": "JS: Node Tut #5",
+    "description": "Tut#5 Description",
+    "published": true,
+    "createdAt": "2020-08-08T17:05:05.000Z",
+    "updatedAt": "2020-08-08T17:05:05.000Z"
+}]
+----
+Get
+https://awtaut.run-ap-south1.goorm.io/api/tutorials/2
+will give you 2nd title
+
+Get
+https://awtaut.run-ap-south1.goorm.io/api//tutorials?title=node
+
+Get
+https://awtaut.run-ap-south1.goorm.io/api/tutorials/published
+
+DELETE
+https://awtaut.run-ap-south1.goorm.io/api/tutorials/4
+Resp -
+{
+    "message": "Tutorial was deleted successfully!"
+}
+
+DELETE
+https://awtaut.run-ap-south1.goorm.io/api/tutorials/
+It will delet everthing
+
+-----------------------------------------------------------------------
+https://bezkoder.com/sequelize-associate-one-to-many/
+https://bezkoder.com/sequelize-associate-many-to-many/
+
+----------------doesnt support Goorm in web mode -------------------
+https://app.getpostman.com/join-team?invite_code=03643fb6958036e4666fa95be7e2bdd1
+postman - ampt20
+---------------
+
+https://github.com/tomtom28/bucketBuddiez
+
+npm init
+npm install
+
+npm WARN deprecated bcrypt-nodejs@0.0.3: bcrypt-nodejs is no longer actively maintained. Please use bcrypt or bcryptjs. See https://github.com/kelektiv/node.bcrypt.js/wiki/bcrypt-vs-brypt.js to learn more about thes
+e two options
+npm WARN deprecated sequelize@3.35.1: This version will no longer receive security fixes per our security policy. Please update to sequelize@5 or above.
+npm WARN deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
+npm WARN deprecated har-validator@5.1.5: this library is no longer supported
+npm WARN deprecated core-js@2.6.11: core-js@<3 is no longer maintained and not recommended for usage due to the number of issues. Please, upgrade your dependencies to the actual version of core-js@3.
+npm WARN deprecated gulp-util@3.0.8: gulp-util is deprecated - replace it, following the guidelines at https://medium.com/gulpjs/gulp-util-ca3b1f9f9ac5
+npm WARN deprecated minimatch@2.0.10: Please update to minimatch 3.0.2 or higher to avoid a RegExp DoS issue
+npm WARN deprecated natives@1.1.6: This module relies on Node.js's internals and will break at some point. Do not use it, and update to graceful-fs@4.x.
+npm WARN deprecated minimatch@0.2.14: Please update to minimatch 3.0.2 or higher to avoid a RegExp DoS issue
+npm WARN deprecated graceful-fs@1.2.3: please upgrade to graceful-fs 4 for compatibility with current and future versions of Node.js
+npm WARN deprecated urix@0.1.0: Please see https://github.com/lydell/urix#deprecated
+npm WARN deprecated resolve-url@0.2.1: https://github.com/lydell/resolve-url#deprecated
+
+Since I got error above I sinstalled the below patch myself,
+npm install sequelize core-js bcryptjs --save
+didnt install this har-validator-fsless
+
+https://amptnjssql.run-ap-south1.goorm.io
+
+npm install express sequelize mysql2 body-parser cors jsonwebtoken bcryptjs --save
+"bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.2",
+    "connect-ensure-login": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.14.2",
+    "fb": "^1.1.1",
+    "method-override": "^2.3.6",
+    "morgan": "^1.7.0",
+    "mysql": "^2.12.0",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.1.1",
+    "passport-local": "^1.0.0",
+    "sequelize": "^3.25.0",
+    "sequelize-cli": "^2.4.0"
+	
+mysql -u root -p
+root
+
+CREATE DATABASE bucketBuddiezDB;
+
+npm run setupDB
+the above comman will install all the dependent tables.
+---------------------------------------------------------
+
+npm init
+npm install
+npm install timeago.js --save
+
+./node_modules/timeago.js
+------------------------------------------------------------------
+
+Web Dev Simplified - very good jwt authenication authorization
+
+-------------------------------------------------------------------
+
+create table users(
+id int auto_increment primary key,
+username VARCHAR(255) not null, 
+email VARCHAR(255) not null, 
+password VARCHAR(255), 
+createdAt DATETIME, 
+updatedAt DATETIME );
+
+CREATE TABLE roles (
+    id int auto_increment primary key,
+	fk_id int NOT NULL ,
+	role VARCHAR(255) not null,
+	description VARCHAR(255), 
+    FOREIGN KEY (fk_id) REFERENCES users(id)
+);
+
+
+INSERT INTO users VALUES (1,'prash','prash@gmail.com','prash',now(),now());
+INSERT INTO roles (fk_id,role) VALUES (4,'admin');
+
+https://www.youtube.com/watch?v=OEN5L_lAY8A
+https://www.youtube.com/watch?v=-RCnNyD0L-s (this one is very cnfusing )
+
+Chris Courses
+Is v good(fantastic)
+https://www.youtube.com/watch?v=qaaUfaieHcE&list=PLpPnRKq7eNW3Qm2OfoJ3Hyvf-36TulLDp&index=7
+
+
+<% if (message) { %>
+   <h4 class="alert alert-danger mt-4"><%= message %></h4>
+<% } %>
+
+<% if (isAuthenticated) { %>
+<li><a href="/logout">Logout</a></li>
+<% } %>
+<% else { %>
+<li><a href="Login">Login</a></li>
+<li><a href="/register">Register</a></li>
+<% } %>
+
+<li><a href="/">Home</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/logout">Logout</a></li>
+				
+				
+<% if (something) { %>
+   // Then do some operation
+<% } %>
+<% else { %>
+   // Then do some operation
+<% } %>				
+
+https://www.youtube.com/watch?v=jI4K7L-LI58&t=469s
+
+-----------------------------------------------------------------------------------------------------------------
+
+user.js
+	const getName = () => {                         const getName = () => {                                     exports.getName = () => {
+      return 'Jim';                                   return 'Jim';                                               return 'Jim';
+    };                                              };                                                          };
+                                                                                                                
+    exports.getName = getName;                      const getLocation = () => {                                 exports.getLocation = () => {
+	                                                  return 'Munich';                                            return 'Munich';
+                                                    };                                                          };
+                                                                                                                
+                                                    const dateOfBirth = '12.01.1982';                           exports.dob = '12.01.1982';
+                                                    
+                                                    exports.getName = getName;
+                                                    exports.getLocation = getLocation;
+                                                    exports.dob = dateOfBirth;	
+
+
+index.js
+	const user = require('./user');                 const user = require('./user');                             const { getName, dob } = require('./user');
+    console.log(`User: ${user.getName()}`);         `${user.getName()} lives in ${user.getLocation()}           console.log(
+	                                                and was born on ${user.dob}.`                                 `${getName()} was born on ${dob}.`
+node index.js                                                                                                   );
+	User: Jim 	                                    Jim lives in Munich and was born on 12.01.1982.
+-------------------------------------------------------------------------------------------------------------------------------------	
+user.js
+	class User {
+		constructor(name, age, email) {
+			this.name = name;
+			this.age = age;
+			this.email = email;
+		}
+		
+		getUserStats() {
+			return `
+			Name: ${this.name}
+			Age: ${this.age}
+			Email: ${this.email}
+			`;
+		}
+	}
+
+module.exports = User;
+
+index.js
+	const User = require('./user');
+    const jim = new User('Jim', 37, 'jim@example.com');
+    
+    console.log(jim.getUserStats());
+
+isAdmin
+
+Async - https://dzone.com/articles/how-to-interact-with-a-database-using-async-functi
+
+
+----------------------------------------------------
+
+cd pro_base_struct_1
+npm init
+npm install
+
+service mysql start
+
+ create database leagues;
+ use leagues;
+ 
+create table users(
+    id int auto_increment primary key,
+    username VARCHAR(255) not null, 
+    email VARCHAR(255) not null, 
+    password VARCHAR(255), 
+    createdAt DATETIME, 
+    updatedAt DATETIME 
+);
+
+CREATE TABLE roles (
+    id int auto_increment primary key,
+	fk_id int NOT NULL ,
+	role VARCHAR(255) not null,
+	description VARCHAR(255), 
+    FOREIGN KEY (fk_id) REFERENCES users(id)
+);
+
+npm install express mysql body-parser ejs cookie-parser express-session passport dotenv jsonwebtoken bcryptjs express-mysql-session --save
+
+npm WARN pro_base_struct_1@1.0.0 No description
+npm WARN pro_base_struct_1@1.0.0 No repository field.
+
++ bcryptjs@2.4.3
++ dotenv@8.2.0
++ express-session@1.17.1
++ cookie-parser@1.4.5
++ mysql@2.18.1
++ jsonwebtoken@8.5.1
++ passport@0.4.1
++ body-parser@1.19.0
++ express@4.17.1
+added 85 packages from 64 contributors and audited 85 packages in 15.91s
+found 0 vulnerabilities
+
+   ╭────────────────────────────────────────────────────────────────╮
+   │                                                                │
+   │      New minor version of npm available! 6.11.3 → 6.14.8       │
+   │   Changelog: https://github.com/npm/cli/releases/tag/v6.14.8   │
+   │               Run npm install -g npm to update!                │
+   │                                                                │
+   ╰────────────────────────────────────────────────────────────────╯
+----- I had mised to install it earlier --------   
+npm install express-mysql-session --save   
+
++ express-mysql-session@2.1.4
+added 9 packages from 9 contributors and audited 94 packages in 6.067s
+found 0 vulnerabilities
+
+npm install ejs --save  
++ ejs@3.1.5
+added 15 packages from 8 contributors and audited 110 packages in 6.882s
+found 0 vulnerabilities
+
+----- I had mised to install it earlier --------   
+
+INSERT INTO roles (fk_id,role) VALUES (1,'admin');
+
+-----
+Zach Gollwitzer - 
+https://www.youtube.com/watch?v=fGrSmBk9v-4
+THe Net Ninja
+https://www.youtube.com/watch?v=sakQbeRjgwg&list=PL4cUxeGkcC9jdm7QX143aMLAqyM-jTZ2x
+https://www.youtube.com/watch?v=7UEyJH7ak1M&list=PL4cUxeGkcC9jdm7QX143aMLAqyM-jTZ2x&index=4
+	https://github.com/iamshaunjp/oauth-playlist/tree/lesson-3
+	https://github.com/iamshaunjp/oauth-playlist
+	
+I think I can use this - Kyle Tranel - "Nodejs and mysql using sequelize & passport part 19 - Auth part 1" ********
+	https://www.youtube.com/watch?v=JG-8Iy4H-gU
+
+Nodejs and mysql using sequelize & passport part 20 - Auth part 2 OR queries
+Nodejs and mysql using sequelize & passport part 21 - Auth pt 3 Stragies
+Nodejs and mysql using sequelize & passport part 22 - Finishing Auth
+
+The playlist for above - https://www.youtube.com/playlist?list=PLjfaBzlo-EiSBxKizxwQQbNBuTpv1x14e	
+------------------------------------------------------------------------------------------------------
+npm install sequelize --save
+npm install mysql2 --save
+
+
+1)
+Before Route - app.js
+
+const db = require('./app/config/db.config.js');
+
+// force: true will drop the table if it already exists
+db.sequelize.sync({force: false}).then(() => {
+  console.log('Drop and Resync with { force: true }');
+}); 
+
+-----------------------------------
+2) 
+pages.js
+const users = require('../controllers/user.controller.js');
+
+// Retrieve all Users
+    app.get('/api/users/all', users.findAll);
+	
+-----------------------------------
+    /config
+      db.config.js
+      env.js
+    /controllers
+      user.controller.js
+    /models
+      user.model.js
+	/resources
+      /static
+        /js
+          getrequest.js
+          postrequest.js
+    /views
+      index.html
+	

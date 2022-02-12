@@ -1,0 +1,706 @@
+mysqldump -u root -proot competition rule > few_rows_dump.sql
+
+source /workspace/ampt/league_prediction_t/script-new.sql
+
+source /workspace/mpt/lp_v0/scripts/table_script.sql
+-----------------------------------------------------------------
+
+DROP DATABASE competition;
+CREATE DATABASE competition;
+
+USE competition;
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` int(10) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `roles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_id` int(11) NOT NULL,
+  `role` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_id` (`fk_id`),
+  FOREIGN KEY (`fk_id`) REFERENCES `users` (`id`)
+);
+
+CREATE TABLE `player` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `team` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `teammember` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_teamid` int(11) NOT NULL,
+  `fk_playerid` int(11) NOT NULL,
+  `active` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_playerid` (`fk_playerid`),
+  KEY `fk_teamid` (`fk_teamid`),
+  FOREIGN KEY (`fk_playerid`) REFERENCES `player` (`id`),
+  FOREIGN KEY (`fk_teamid`) REFERENCES `team` (`id`)
+);
+
+CREATE TABLE `series` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `year` int(11) NOT NULL,
+  `month` int(11) DEFAULT NULL,
+  `playerofseries` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `playerofseries` (`playerofseries`),
+  FOREIGN KEY (`playerofseries`) REFERENCES `player` (`id`)
+);
+
+CREATE TABLE `match_det` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_team_A` int(11) NOT NULL,
+  `fk_team_B` int(11) NOT NULL,
+  `fk_s_id` int(11) NOT NULL,
+  `disp_match_num` int(11) DEFAULT NULL,
+  `home_team` varchar(25) DEFAULT NULL,
+  `venue` varchar(255) NOT NULL,
+  `start_time` datetime NOT NULL,
+  `matchresult` varchar(25) DEFAULT NULL,
+  `mom` varchar(25) DEFAULT NULL,
+  `completed` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_team_A` (`fk_team_A`),
+  KEY `fk_team_B` (`fk_team_B`),
+  KEY `fk_s_id` (`fk_s_id`),
+  FOREIGN KEY (`fk_team_A`) REFERENCES `team` (`id`),
+  FOREIGN KEY (`fk_team_B`) REFERENCES `team` (`id`),
+  FOREIGN KEY (`fk_s_id`) REFERENCES `series` (`id`)
+);
+
+CREATE TABLE `participant` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_m_id` int(11) NOT NULL,
+  `fk_p_id` int(11) NOT NULL,
+  `active` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_m_id` (`fk_m_id`),
+  KEY `fk_p_id` (`fk_p_id`),
+  FOREIGN KEY (`fk_m_id`) REFERENCES `match_det` (`id`),
+  FOREIGN KEY (`fk_p_id`) REFERENCES `player` (`id`)
+);
+
+CREATE TABLE `league` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `fk_id` int(11) NOT NULL,
+  `fk_s_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_id` (`fk_id`),
+  KEY `fk_s_id` (`fk_s_id`),
+  FOREIGN KEY (`fk_id`) REFERENCES `users` (`id`),
+  FOREIGN KEY (`fk_s_id`) REFERENCES `series` (`id`)
+);
+
+CREATE TABLE `userleague` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_u_id` int(11) NOT NULL,
+  `fk_l_id` int(11) NOT NULL,
+  `owner` tinyint(1) DEFAULT NULL,
+  `ranked` int(11) DEFAULT NULL,
+  `score` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_u_id` (`fk_u_id`),
+  KEY `fk_l_id` (`fk_l_id`),
+  FOREIGN KEY (`fk_u_id`) REFERENCES `users` (`id`),
+  FOREIGN KEY (`fk_l_id`) REFERENCES `league` (`id`)
+);
+
+CREATE TABLE `rule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(40) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `fk_l_id` int(11) NOT NULL,
+  `points` int(11) NOT NULL,
+  `active` tinyint(1) DEFAULT NULL,
+  `stage` varchar(8) DEFAULT NULL,
+  `selection` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_l_id` (`fk_l_id`),
+  FOREIGN KEY (`fk_l_id`) REFERENCES `league` (`id`)
+);
+
+CREATE TABLE `predict` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_u_id` int(11) NOT NULL,
+  `fk_m_id` int(11) NOT NULL,
+  `fk_r_id` int(11) NOT NULL,
+  `predict_value` int(11) DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_u_id` (`fk_u_id`),
+  KEY `fk_m_id` (`fk_m_id`),
+  KEY `fk_r_id` (`fk_r_id`),
+  FOREIGN KEY (`fk_u_id`) REFERENCES `users` (`id`),
+  FOREIGN KEY (`fk_m_id`) REFERENCES `match_det` (`id`),
+  FOREIGN KEY (`fk_r_id`) REFERENCES `rule` (`id`)
+);
+
+CREATE TABLE `predict_backup` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_u_id` int(11) NOT NULL,
+  `fk_m_id` int(11) NOT NULL,
+  `fk_r_id` int(11) NOT NULL,
+  `predict_value` int(11) DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_u_id` (`fk_u_id`),
+  KEY `fk_m_id` (`fk_m_id`),
+  KEY `fk_r_id` (`fk_r_id`)
+);
+
+CREATE TABLE `score` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_u_id` int(11) NOT NULL,
+  `fk_m_id` int(11) NOT NULL,
+  `fk_r_id` int(11) NOT NULL,
+  `predict_value` int(11) DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `score_value` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_u_id` (`fk_u_id`),
+  KEY `fk_m_id` (`fk_m_id`),
+  KEY `fk_r_id` (`fk_r_id`),
+  FOREIGN KEY (`fk_u_id`) REFERENCES `users` (`id`),
+  FOREIGN KEY (`fk_m_id`) REFERENCES `match_det` (`id`),
+  FOREIGN KEY (`fk_r_id`) REFERENCES `rule` (`id`)
+);
+
+CREATE TABLE `result` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_m_id` int(11) NOT NULL,
+  `fk_r_id` int(11) NOT NULL,
+  `actual_value` int(11) DEFAULT NULL,
+  `timeAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_m_id` (`fk_m_id`),
+  KEY `fk_r_id` (`fk_r_id`),
+  FOREIGN KEY (`fk_m_id`) REFERENCES `match_det` (`id`),
+  FOREIGN KEY (`fk_r_id`) REFERENCES `rule` (`id`)
+);
+
+CREATE TABLE `rule_range` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_r_id` int(11) NOT NULL,
+  `point_range` int(11) DEFAULT NULL,
+  `points` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_r_id` (`fk_r_id`),
+  FOREIGN KEY (`fk_r_id`) REFERENCES `rule` (`id`)
+);
+
+/********************************************************************/
+
+USE competition;
+
+delete from userleague;
+delete from score;
+delete from result;
+delete from predict;
+delete from predict_backup;
+delete from participant;
+delete from rule;
+delete from match_det;
+delete from roles;
+delete from sessions;
+delete from teammember;
+delete from team;
+delete from player;
+delete from league;
+delete from series;
+delete from users;
+
+/********************************************************************/
+
+INSERT INTO team (name) VALUES ('CSK');
+INSERT INTO team (name) VALUES ('DC');
+INSERT INTO team (name) VALUES ('KKR');
+INSERT INTO team (name) VALUES ('KXIP');
+INSERT INTO team (name) VALUES ('MI');
+INSERT INTO team (name) VALUES ('RCB');
+INSERT INTO team (name) VALUES ('RR');
+INSERT INTO team (name) VALUES ('SRH');
+
+INSERT INTO series (name,year,month) VALUES ('IPL',2020,09);
+
+INSERT INTO player (name) VALUES ('Narayan Jagadeesan');
+INSERT INTO player (name) VALUES ('Ruturaj Gaikwad');
+INSERT INTO player (name) VALUES ('KM Asif');
+INSERT INTO player (name) VALUES ('Ravindra Jadeja');
+INSERT INTO player (name) VALUES ('M Vijay');
+INSERT INTO player (name) VALUES ('MS Dhoni ');
+INSERT INTO player (name) VALUES ('Josh Hazlewood');
+INSERT INTO player (name) VALUES ('Kedar Jadhav');
+INSERT INTO player (name) VALUES ('Karn Sharma');
+INSERT INTO player (name) VALUES ('Piyush Chawla');
+INSERT INTO player (name) VALUES ('Ambati Rayudu');
+INSERT INTO player (name) VALUES ('Suresh Raina');
+INSERT INTO player (name) VALUES ('Imran Tahir');
+INSERT INTO player (name) VALUES ('Deepak Chahar');
+INSERT INTO player (name) VALUES ('Faf du Plessis');
+INSERT INTO player (name) VALUES ('Shardul Thakur');
+INSERT INTO player (name) VALUES ('Mitchell Santner');
+INSERT INTO player (name) VALUES ('Dwayne Bravo');
+INSERT INTO player (name) VALUES ('Lungi Ngidi');
+INSERT INTO player (name) VALUES ('Sam Curran');
+INSERT INTO player (name) VALUES ('Monu Kumar');
+INSERT INTO player (name) VALUES ('Shane Watson');
+INSERT INTO player (name) VALUES ('Sai Kishore');
+INSERT INTO player (name) VALUES ('Harbhajan Singh');
+INSERT INTO player (name) VALUES ('Shreyas Iyer ');
+INSERT INTO player (name) VALUES ('Prithvi Shaw');
+INSERT INTO player (name) VALUES ('Ajinkya Rahane');
+INSERT INTO player (name) VALUES ('Shikhar Dhawan');
+INSERT INTO player (name) VALUES ('Jason Roy');
+INSERT INTO player (name) VALUES ('Ishant Sharma');
+INSERT INTO player (name) VALUES ('Amit Mishra');
+INSERT INTO player (name) VALUES ('Avesh Khan');
+INSERT INTO player (name) VALUES ('Sandeep Lamichhane');
+INSERT INTO player (name) VALUES ('Kagiso Rabada');
+INSERT INTO player (name) VALUES ('Keemo Paul');
+INSERT INTO player (name) VALUES ('Mohit Sharma');
+INSERT INTO player (name) VALUES ('Lalit Yadav');
+INSERT INTO player (name) VALUES ('Axar Patel');
+INSERT INTO player (name) VALUES ('Harshal Patel');
+INSERT INTO player (name) VALUES ('R Ashwin');
+INSERT INTO player (name) VALUES ('Marcus Stoinis');
+INSERT INTO player (name) VALUES ('Chris Woakes');
+INSERT INTO player (name) VALUES ('Rishabh Pant');
+INSERT INTO player (name) VALUES ('Alex Carey');
+INSERT INTO player (name) VALUES ('Shimron Hetmyer');
+INSERT INTO player (name) VALUES ('Tushar Deshpande');
+INSERT INTO player (name) VALUES ('Andre Russell');
+INSERT INTO player (name) VALUES ('Dinesh Karthik');
+INSERT INTO player (name) VALUES ('Harry Gurney');
+INSERT INTO player (name) VALUES ('Kamlesh Nagarkoti');
+INSERT INTO player (name) VALUES ('Kuldeep Yadav');
+INSERT INTO player (name) VALUES ('Lockie Ferguson');
+INSERT INTO player (name) VALUES ('Nitish Rana');
+INSERT INTO player (name) VALUES ('Prasidh Krishna');
+INSERT INTO player (name) VALUES ('Rinku Singh');
+INSERT INTO player (name) VALUES ('Sandeep Warrier');
+INSERT INTO player (name) VALUES ('Shivam Mavi');
+INSERT INTO player (name) VALUES ('Shubman Gill');
+INSERT INTO player (name) VALUES ('Siddhesh Lad');
+INSERT INTO player (name) VALUES ('Sunil Narine');
+INSERT INTO player (name) VALUES ('Pat Cummins');
+INSERT INTO player (name) VALUES ('Eoin Morgan');
+INSERT INTO player (name) VALUES ('Varun Chakravarthy');
+INSERT INTO player (name) VALUES ('Tom Banton');
+INSERT INTO player (name) VALUES ('Rahul Tripathi');
+INSERT INTO player (name) VALUES ('Chris Green');
+INSERT INTO player (name) VALUES ('M Siddharth');
+INSERT INTO player (name) VALUES ('Praveen Tambe');
+INSERT INTO player (name) VALUES ('Nikhil Naik');
+INSERT INTO player (name) VALUES ('Chris Gayle');
+INSERT INTO player (name) VALUES ('Mayank Agarwal');
+INSERT INTO player (name) VALUES ('Karun Nair');
+INSERT INTO player (name) VALUES ('Sarfaraz Khan');
+INSERT INTO player (name) VALUES ('Mandeep Singh');
+INSERT INTO player (name) VALUES ('Sheldon Cottrell');
+INSERT INTO player (name) VALUES ('Ishan Porel');
+INSERT INTO player (name) VALUES ('Ravi Bishnoi');
+INSERT INTO player (name) VALUES ('Mohammed Shami');
+INSERT INTO player (name) VALUES ('Mujeeb ur Rahman');
+INSERT INTO player (name) VALUES ('Arshdeep Singh');
+INSERT INTO player (name) VALUES ('Hardus Viljoen');
+INSERT INTO player (name) VALUES ('M Ashwin');
+INSERT INTO player (name) VALUES ('J Suchith');
+INSERT INTO player (name) VALUES ('Harpreet Brar');
+INSERT INTO player (name) VALUES ('Darshan Nalkande');
+INSERT INTO player (name) VALUES ('Glenn Maxwell');
+INSERT INTO player (name) VALUES ('James Neesham');
+INSERT INTO player (name) VALUES ('Chris Jordan');
+INSERT INTO player (name) VALUES ('Krishnappa Gowtham');
+INSERT INTO player (name) VALUES ('Deepak Hooda');
+INSERT INTO player (name) VALUES ('Tajinder Singh Dhillon');
+INSERT INTO player (name) VALUES ('KL Rahul ');
+INSERT INTO player (name) VALUES ('Nicholas Pooran');
+INSERT INTO player (name) VALUES ('Prabhsimran Singh.');
+INSERT INTO player (name) VALUES ('Rohit Sharma');
+INSERT INTO player (name) VALUES ('Sherfane Rutherford');
+INSERT INTO player (name) VALUES ('Suryakumar Yadav');
+INSERT INTO player (name) VALUES ('Anmolpreet Singh');
+INSERT INTO player (name) VALUES ('Chris Lynn');
+INSERT INTO player (name) VALUES ('Saurabh Tiwary');
+INSERT INTO player (name) VALUES ('Dhawal Kulkarni');
+INSERT INTO player (name) VALUES ('Jasprit Bumrah');
+INSERT INTO player (name) VALUES ('Lasith Malinga');
+INSERT INTO player (name) VALUES ('Mitchell McClenaghan');
+INSERT INTO player (name) VALUES ('Rahul Chahar');
+INSERT INTO player (name) VALUES ('Trent Boult');
+INSERT INTO player (name) VALUES ('Mohsin Khan');
+INSERT INTO player (name) VALUES ('Prince Balwant Rai Singh');
+INSERT INTO player (name) VALUES ('Digvijay Deshmukh');
+INSERT INTO player (name) VALUES ('Hardik Pandya');
+INSERT INTO player (name) VALUES ('Jayant Yadav');
+INSERT INTO player (name) VALUES ('Kieron Pollard');
+INSERT INTO player (name) VALUES ('Krunal Pandya');
+INSERT INTO player (name) VALUES ('Anukul Roy');
+INSERT INTO player (name) VALUES ('Nathan Coulter-Nile');
+INSERT INTO player (name) VALUES ('Ishan Kishan');
+INSERT INTO player (name) VALUES ('Quinton de Kock');
+INSERT INTO player (name) VALUES ('Aditya Tare');
+INSERT INTO player (name) VALUES ('Virat Kohli');
+INSERT INTO player (name) VALUES ('AB de Villiers');
+INSERT INTO player (name) VALUES ('Gurkeerat Mann');
+INSERT INTO player (name) VALUES ('Devdutt Padikkal');
+INSERT INTO player (name) VALUES ('Aaron Finch');
+INSERT INTO player (name) VALUES ('Yuzvendra Chahal');
+INSERT INTO player (name) VALUES ('Mohammed Siraj');
+INSERT INTO player (name) VALUES ('Umesh Yadav');
+INSERT INTO player (name) VALUES ('Navdeep Saini');
+INSERT INTO player (name) VALUES ('Kane Richardson');
+INSERT INTO player (name) VALUES ('Dale Steyn');
+INSERT INTO player (name) VALUES ('Isuru Udana');
+INSERT INTO player (name) VALUES ('Moeen Ali');
+INSERT INTO player (name) VALUES ('Pawan Negi');
+INSERT INTO player (name) VALUES ('Shivam Dube');
+INSERT INTO player (name) VALUES ('Washington Sundar');
+INSERT INTO player (name) VALUES ('Chris Morris');
+INSERT INTO player (name) VALUES ('Pavan Deshpande');
+INSERT INTO player (name) VALUES ('Joshua Philippe');
+INSERT INTO player (name) VALUES ('Shahbaz Ahamad');
+INSERT INTO player (name) VALUES ('Parthiv Patel');
+INSERT INTO player (name) VALUES ('Mahipal Lomror');
+INSERT INTO player (name) VALUES ('Manan Vohra');
+INSERT INTO player (name) VALUES ('Riyan Parag');
+INSERT INTO player (name) VALUES ('Steve Smith');
+INSERT INTO player (name) VALUES ('Robin Uthappa');
+INSERT INTO player (name) VALUES ('David Miller');
+INSERT INTO player (name) VALUES ('Ankit Rajpoot');
+INSERT INTO player (name) VALUES ('Mayank Markande');
+INSERT INTO player (name) VALUES ('Jofra Archer');
+INSERT INTO player (name) VALUES ('Shreyas Gopal');
+INSERT INTO player (name) VALUES ('Varun Aaron');
+INSERT INTO player (name) VALUES ('Jaydev Unadkat');
+INSERT INTO player (name) VALUES ('Kartik Tyagi');
+INSERT INTO player (name) VALUES ('Akash Singh');
+INSERT INTO player (name) VALUES ('Oshane Thomas');
+INSERT INTO player (name) VALUES ('Andrew Tye');
+INSERT INTO player (name) VALUES ('Ben Stokes');
+INSERT INTO player (name) VALUES ('Rahul Tewatia');
+INSERT INTO player (name) VALUES ('Shashank Singh');
+INSERT INTO player (name) VALUES ('Yashasvi Jaiswal');
+INSERT INTO player (name) VALUES ('Anirudha Joshi');
+INSERT INTO player (name) VALUES ('Tom Curran');
+INSERT INTO player (name) VALUES ('Jos Buttler');
+INSERT INTO player (name) VALUES ('Sanju Samson');
+INSERT INTO player (name) VALUES ('Anuj Rawat');
+INSERT INTO player (name) VALUES ('Kane Williamson');
+INSERT INTO player (name) VALUES ('David Warner');
+INSERT INTO player (name) VALUES ('Manish Pandey');
+INSERT INTO player (name) VALUES ('Virat Singh');
+INSERT INTO player (name) VALUES ('Priyam Garg');
+INSERT INTO player (name) VALUES ('Abdul Samad');
+INSERT INTO player (name) VALUES ('Bhuvneshwar Kumar');
+INSERT INTO player (name) VALUES ('Khaleel Ahmed');
+INSERT INTO player (name) VALUES ('Sandeep Sharma');
+INSERT INTO player (name) VALUES ('Siddharth Kaul');
+INSERT INTO player (name) VALUES ('Billy Stanlake');
+INSERT INTO player (name) VALUES ('T Natarajan');
+INSERT INTO player (name) VALUES ('Abhishek Sharma');
+INSERT INTO player (name) VALUES ('Shahbaz Nadeem');
+INSERT INTO player (name) VALUES ('Mitchell Marsh');
+INSERT INTO player (name) VALUES ('Fabian Allen');
+INSERT INTO player (name) VALUES ('Vijay Shankar');
+INSERT INTO player (name) VALUES ('Mohammad Nabi');
+INSERT INTO player (name) VALUES ('Rashid Khan');
+INSERT INTO player (name) VALUES ('Sanjay Yadav');
+INSERT INTO player (name) VALUES ('Jonny Bairstow');
+INSERT INTO player (name) VALUES ('Wriddhiman Saha');
+INSERT INTO player (name) VALUES ('Shreevats Goswami');
+INSERT INTO player (name) VALUES ('Bavanaka Sandeep');
+INSERT INTO player (name) VALUES ('Basil Thampi');
+
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,1,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,2,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,3,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,4,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,5,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,6,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,7,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,8,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,9,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,10,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,11,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,12,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,13,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,14,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,15,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,16,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,17,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,18,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,19,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,20,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,21,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,22,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,23,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (1,24,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,25,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,26,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,27,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,28,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,29,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,30,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,31,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,32,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,33,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,34,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,35,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,36,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,37,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,38,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,39,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,40,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,41,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,42,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,43,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,44,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,45,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (2,46,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,47,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,48,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,49,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,50,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,51,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,52,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,53,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,54,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,55,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,56,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,57,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,58,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,59,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,60,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,61,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,62,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,63,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,64,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,65,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,66,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,67,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,68,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (3,69,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,70,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,71,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,72,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,73,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,74,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,75,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,76,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,77,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,78,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,79,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,80,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,81,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,82,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,83,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,84,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,85,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,86,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,87,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,88,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,89,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,90,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,91,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,92,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,93,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (4,94,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,95,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,96,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,97,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,98,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,99,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,100,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,101,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,102,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,103,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,104,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,105,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,106,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,107,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,108,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,109,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,110,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,111,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,112,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,113,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,114,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,115,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,116,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,117,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (5,118,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,119,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,120,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,121,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,122,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,123,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,124,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,125,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,126,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,127,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,128,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,129,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,130,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,131,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,132,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,133,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,134,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,135,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,136,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,137,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,138,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (6,139,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,140,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,141,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,142,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,143,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,144,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,145,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,146,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,147,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,148,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,149,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,150,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,151,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,152,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,153,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,154,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,155,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,156,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,157,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,158,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,159,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,160,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,161,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,162,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,163,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (7,164,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,165,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,166,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,167,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,168,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,169,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,170,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,171,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,172,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,173,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,174,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,175,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,176,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,177,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,178,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,179,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,180,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,181,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,182,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,183,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,184,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,185,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,186,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,187,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,188,true);
+INSERT INTO teammember (fk_teamid, fk_playerid, active) VALUES (8,189,true);
+
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (5,1,1,1,'ABU DHABI','2020-09-19 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (2,4,1,2,'DUBAI','2020-09-20 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (8,6,1,3,'DUBAI','2020-09-21 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (7,1,1,4,'SHARJAH','2020-09-22 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (3,5,1,5,'ABU DHABI','2020-09-23 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (4,6,1,6,'DUBAI','2020-09-24 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (1,2,1,7,'DUBAI','2020-09-25 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (3,8,1,8,'ABU DHABI','2020-09-26 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (7,4,1,9,'SHARJAH','2020-09-27 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (6,5,1,10,'DUBAI','2020-09-28 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (2,8,1,11,'ABU DHABI','2020-09-29 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (7,3,1,12,'DUBAI','2020-09-30 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (4,5,1,13,'ABU DHABI','2020-10-01 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (1,8,1,14,'DUBAI','2020-10-02 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (6,7,1,15,'ABU DHABI','2020-10-03 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (2,3,1,16,'SHARJAH','2020-10-03 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (5,8,1,17,'SHARJAH','2020-10-04 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (4,1,1,18,'DUBAI','2020-10-04 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (6,2,1,19,'DUBAI','2020-10-05 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (5,7,1,20,'ABU DHABI','2020-10-06 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (3,1,1,21,'ABU DHABI','2020-10-07 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (8,4,1,22,'DUBAI','2020-10-08 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (7,2,1,23,'SHARJAH','2020-10-09 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (4,3,1,24,'ABU DHABI','2020-10-10 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (1,6,1,25,'DUBAI','2020-10-10 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (8,7,1,26,'DUBAI','2020-10-11 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (5,2,1,27,'ABU DHABI','2020-10-11 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (6,3,1,28,'SHARJAH','2020-10-12 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (8,1,1,29,'DUBAI','2020-10-13 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (2,7,1,30,'DUBAI','2020-10-14 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (6,4,1,31,'SHARJAH','2020-10-15 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (5,3,1,32,'ABU DHABI','2020-10-16 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (7,6,1,33,'DUBAI','2020-10-17 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (2,1,1,34,'SHARJAH','2020-10-17 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (8,3,1,35,'ABU DHABI','2020-10-18 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (5,4,1,36,'DUBAI','2020-10-18 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (1,7,1,37,'ABU DHABI','2020-10-19 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (4,2,1,38,'DUBAI','2020-10-20 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (3,6,1,39,'ABU DHABI','2020-10-21 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (7,8,1,40,'DUBAI','2020-10-22 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (1,5,1,41,'SHARJAH','2020-10-23 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (3,2,1,42,'ABU DHABI','2020-10-24 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (4,8,1,43,'DUBAI','2020-10-24 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (6,1,1,44,'DUBAI','2020-10-25 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (7,5,1,45,'ABU DHABI','2020-10-25 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (3,4,1,46,'SHARJAH','2020-10-26 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (8,2,1,47,'DUBAI','2020-10-27 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (5,6,1,48,'ABU DHABI','2020-10-28 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (1,3,1,49,'DUBAI','2020-10-29 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (4,7,1,50,'ABU DHABI','2020-10-30 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (2,5,1,51,'DUBAI','2020-10-31 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (6,8,1,52,'SHARJAH','2020-10-31 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (1,4,1,53,'ABU DHABI','2020-11-01 10:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (3,7,1,54,'DUBAI','2020-11-01 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (2,6,1,55,'ABU DHABI','2020-11-02 14:00:00');
+INSERT INTO match_det(fk_team_A,fk_team_B,fk_s_id,disp_match_num,venue,start_time) VALUES (8,5,1,56,'SHARJAH','2020-11-03 14:00:00');
+
+
+
+
+INSERT INTO league (name,fk_id,fk_s_id) VALUES ('global',1,1);
+
+INSERT INTO userleague (fk_u_id,fk_l_id,owner) VALUES (1,1,true);
+
+
+ 
+INSERT INTO rule (name , description , fk_l_id , points , active , stage , selection) VALUES ('Toss Winner','This is stage 1 prediction. Contestent should predict the Toss winner before actul toss happend. Contestent can make multiple prediction, but the last prediction before the toss will be considered.',1,5,1,'stage1','team');
+
+INSERT INTO rule (name , description , fk_l_id , points , active , stage , selection) VALUES  ('Match Winner','This is stage 2 prediction. Contestent should predict the Match winner before the first ball bowled of that particular match. Contestent can make multiple predictions , but the last prediction before the first ball bowled will be considered. ',1,10,1,'stage2','team');
+
+INSERT INTO rule (name , description , fk_l_id , points , active , stage , selection) VALUES  ('Man of the Match','This is stage 2 prediction. Contestent should predict the Man of the Match before the first ball bowled of that particular match. Contestent can make multiple predictions , but the last prediction before the first ball bowled will be considered.',1,15,1,'stage2','player');
+
+INSERT INTO rule (name , description , fk_l_id , points , active , stage , selection) VALUES   ('1st Innings Score','This is stage 3 prediction. Contestent should predict the 1st inning score before the last ball of 15th over bowled. Contestent can make multiple predictions , but the last prediction before the last ball of 15th over bowled will be considered.',1,25,1,'stage3',NULL);
+
+INSERT INTO rule (name , description , fk_l_id , points , active , stage , selection) VALUES  ('1st Innings Wicket','This is stage 3 prediction. Contestent should predict the 1st inning number of wicket before the last ball of 15th over bowled. Contestent can make multiple predictions , but the last prediction before the last ball of 15th over bowled will be considered.',1,10,1,'stage3',NULL);
+
+
+INSERT INTO `rule_range` VALUES (1,4,5,15),(2,4,10,10),(3,4,25,5),(5,5,1,5),(6,5,2,3),(7,5,3,1);
+
+INSERT INTO roles (fk_id,role) VALUES (1,'admin');
+
+

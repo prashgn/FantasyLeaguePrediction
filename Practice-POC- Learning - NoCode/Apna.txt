@@ -1,0 +1,15 @@
+cd lp_v0
+npm init
+npm install
+
+service mysql start
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'mpt@titans_2020';
+FLUSH PRIVILEGES;
+exit;
+
+service mysql restart
+
+mysql-u root -p
+mpt@titans_2020
